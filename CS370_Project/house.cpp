@@ -17,7 +17,11 @@ Work List:
 -Better tables and chairs
 -First floor railings
 -Stair railings
--Bar
+-Texture ceiling
+-Texture second floor
+-Texture stairs
+-Better bar & bar backdrop (window and shelf)
+-Decrease texture map size where possible
 
 Known Issues:
 -Y position mouselook is unbounded
@@ -80,11 +84,15 @@ GLint texSampler;
 #define WOOD_MID_SIDES 6
 #define WOOD_MID_ENTRANCE 7
 #define WALL_ART 8
-#define NO_TEXTURES 9
+#define WALLPAPER 9
+#define WALLPAPER_NARROW 10
+#define WALLPAPER_ROT 11
+#define FLOOR_TILE 12
+#define NO_TEXTURES 13
 // Texture indices
 GLuint tex_ids[NO_TEXTURES];
 // Texture files
-char texture_files[9][20] = { "space.jpg", "et.bmp", "mn.bmp", "drp.jpg", "dlid.jpg", "tile.png", "wdflrms.jpg", "wdflrme.jpg", "jwart.jpg" };
+char texture_files[13][20] = { "space.jpg", "et.bmp", "mn.bmp", "drp.jpg", "dlid.jpg", "tile.png", "wdflrms.jpg", "wdflrme.jpg", "jwart.jpg", "wallpaper.jpg", "wallpaper2.jpg", "wallpaperrot.jpg", "fltile.jpg" };
 /////////////////////////////
 
 #define RAD2DEG (180.0f/3.14159f)
@@ -1130,26 +1138,32 @@ void balcony_list()
 
 	//SECOND FLOOR ENTRANCE WALL BUMPOUT
 	//set_material(GL_FRONT, &emerald);
-	set_material(GL_FRONT, &faux_wood);
+	glUseProgram(textureProg);
+	glBindTexture(GL_TEXTURE_2D, tex_ids[WALLPAPER_ROT]);
+	//set_material(GL_FRONT, &faux_wood);
 	glPushMatrix();
 	glTranslatef(70.125f, 27.5f, 0.0f);
 	glScalef(9.75f, 25.0f, 100.0f);
-	colorcube();
+	texcube();
 	glPopMatrix();
+
+	//BALCONY WALL BUMPOUT
+	//set_material(GL_FRONT, &emerald);
+	//set_material(GL_FRONT, &faux_wood);
+	glBindTexture(GL_TEXTURE_2D, tex_ids[WALLPAPER_NARROW]);
+	glPushMatrix();
+	glTranslatef(-67.5f, SECOND_FLOOR + 10.0f, 0.0f);
+	glScalef(15.0f, 20.0f, 100.0f);
+	texcube();
+	glPopMatrix();
+
+	glUseProgram(shaderProg);
+
 	//ENTRANCE SIDING
 	glPushMatrix();
 	set_material(GL_FRONT, &faux_wood);
 	glTranslatef(65.1f, SECOND_FLOOR + 1.0f, 0.0f);
 	glScalef(0.25f, 2.0f, 70.0f);
-	colorcube();
-	glPopMatrix();
-
-	//BALCONY WALL BUMPOUT
-	//set_material(GL_FRONT, &emerald);
-	set_material(GL_FRONT, &faux_wood);
-	glPushMatrix();
-	glTranslatef(-67.5f, SECOND_FLOOR + 10.0f, 0.0f);
-	glScalef(15.0f, 20.0f, 100.0f);
 	colorcube();
 	glPopMatrix();
 
@@ -2164,25 +2178,32 @@ void floor_list()
 	glPushAttrib(GL_CURRENT_BIT);
 
 	//FLOOR
+	glUseProgram(textureProg);
+	glBindTexture(GL_TEXTURE_2D, tex_ids[FLOOR_TILE]);
 	glPushMatrix();
 	//gl_color3f(0.0f, 0.25f, 0.5f);
 		glBegin(GL_QUADS);
+		glTexCoord2f(0, 0);
 		glVertex3f(HOUSE_X, FLOOR_Y, HOUSE_Z);
+		glTexCoord2f(0, 30);
 		glVertex3f(HOUSE_X, FLOOR_Y, -HOUSE_Z);
+		glTexCoord2f(20, 30);
 		glVertex3f(-HOUSE_X, FLOOR_Y, -HOUSE_Z);
+		glTexCoord2f(20, 0);
 		glVertex3f(-HOUSE_X, FLOOR_Y, HOUSE_Z);
 		glEnd();
 	glPopMatrix();
+	glUseProgram(shaderProg);
 
-	glPushMatrix();
+	//glPushMatrix();
 	//gl_color3f(0.0f, 1.0f, 0.0f);
-		glBegin(GL_QUADS);
-		glVertex3f(5.0f, 0.01f, 5.0f);
-		glVertex3f(-5.0f, 0.01f, 5.0f);
-		glVertex3f(-5.0f, 0.01f, -5.0f);
-		glVertex3f(5.0f, 0.01f, -5.0f);
-		glEnd();
-	glPopMatrix();
+		//glBegin(GL_QUADS);
+		//glVertex3f(5.0f, 0.01f, 5.0f);
+		//glVertex3f(-5.0f, 0.01f, 5.0f);
+		//glVertex3f(-5.0f, 0.01f, -5.0f);
+		//glVertex3f(5.0f, 0.01f, -5.0f);
+		//glEnd();
+	//glPopMatrix();
 
 	glPopAttrib();
 	glEndList();
@@ -2194,13 +2215,19 @@ void wall_list()
 	glNewList(WALLS, GL_COMPILE);
 	glPushAttrib(GL_CURRENT_BIT);
 
+	glUseProgram(textureProg);
+	glBindTexture(GL_TEXTURE_2D, tex_ids[WALLPAPER]);
 	//WALLS
 	glPushMatrix();
 	//gl_color3f(0.5f, 0.25f, 0.25f);
 		glBegin(GL_QUADS);
+		glTexCoord2f(0, 0);
 		glVertex3f(HOUSE_X, WALL_Y_LOWER, HOUSE_Z);
+		glTexCoord2f(1, 0);
 		glVertex3f(HOUSE_X, WALL_Y_UPPER, HOUSE_Z);
+		glTexCoord2f(1, 1);
 		glVertex3f(HOUSE_X, WALL_Y_UPPER, -HOUSE_Z);
+		glTexCoord2f(0, 1);
 		glVertex3f(HOUSE_X, WALL_Y_LOWER, -HOUSE_Z);
 		glEnd();
 	glPopMatrix();
@@ -2208,19 +2235,13 @@ void wall_list()
 	glPushMatrix();
 	//gl_color3f(0.5f, 0.25f, 0.25f);
 		glBegin(GL_QUADS);
+		glTexCoord2f(0, 0);
 		glVertex3f(-HOUSE_X, WALL_Y_LOWER, HOUSE_Z);
+		glTexCoord2f(1, 0);
 		glVertex3f(-HOUSE_X, WALL_Y_UPPER, HOUSE_Z);
-		glVertex3f(-HOUSE_X, WALL_Y_UPPER, -HOUSE_Z);
-		glVertex3f(-HOUSE_X, WALL_Y_LOWER, -HOUSE_Z);
-		glEnd();
-	glPopMatrix();
-
-	glPushMatrix();
-	//gl_color3f(0.5f, 0.25f, 0.25f);
-		glBegin(GL_QUADS);
-		glVertex3f(-HOUSE_X, WALL_Y_LOWER, HOUSE_Z);
-		glVertex3f(-HOUSE_X, WALL_Y_UPPER, HOUSE_Z);
+		glTexCoord2f(1, 1);
 		glVertex3f(HOUSE_X, WALL_Y_UPPER, HOUSE_Z);
+		glTexCoord2f(0, 1);
 		glVertex3f(HOUSE_X, WALL_Y_LOWER, HOUSE_Z);
 		glEnd();
 	glPopMatrix();
@@ -2228,11 +2249,27 @@ void wall_list()
 	glPushMatrix();
 	//gl_color3f(0.5f, 0.25f, 0.25f);
 		glBegin(GL_QUADS);
+		glTexCoord2f(0, 0);
 		glVertex3f(-HOUSE_X, WALL_Y_LOWER, -HOUSE_Z);
+		glTexCoord2f(1, 0);
 		glVertex3f(-HOUSE_X, WALL_Y_UPPER, -HOUSE_Z);
+		glTexCoord2f(1, 1);
 		glVertex3f(HOUSE_X, WALL_Y_UPPER, -HOUSE_Z);
+		glTexCoord2f(0, 1);
 		glVertex3f(HOUSE_X, WALL_Y_LOWER, -HOUSE_Z);
 		glEnd();
+	glPopMatrix();
+
+	glUseProgram(shaderProg);
+
+	glPushMatrix();
+	//gl_color3f(0.5f, 0.25f, 0.25f);
+	glBegin(GL_QUADS);
+	glVertex3f(-HOUSE_X, WALL_Y_LOWER, HOUSE_Z);
+	glVertex3f(-HOUSE_X, WALL_Y_UPPER, HOUSE_Z);
+	glVertex3f(-HOUSE_X, WALL_Y_UPPER, -HOUSE_Z);
+	glVertex3f(-HOUSE_X, WALL_Y_LOWER, -HOUSE_Z);
+	glEnd();
 	glPopMatrix();
 
 	glPopAttrib();

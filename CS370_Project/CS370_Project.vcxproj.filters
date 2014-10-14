@@ -81,5 +81,17 @@
     <Image Include="jwart.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="wallpaper.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="wallpaper2.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="wallpaperrot.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="fltile.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
