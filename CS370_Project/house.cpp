@@ -202,6 +202,7 @@ bool load_textures();
 void texture_Scene();
 void texcube();
 void tex_quad(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat n1[], GLfloat n2[], GLfloat n3[], GLfloat n4[]);
+void hybridcube(int top, int bottom, int left, int right, int front, int back);
 
 //display list prototypes
 void table_list();
@@ -633,7 +634,6 @@ void render_Scene()
 
 	//BASIC WALLS
 	glPushMatrix();
-	//set_material(GL_FRONT, &emerald);
 	set_material(GL_FRONT, &faux_wood);
 	glCallList(WALLS);
 	glPopMatrix();
@@ -717,11 +717,9 @@ void render_Scene()
 
 
 	//MID FIRST FLOOR
-	glUseProgram(textureProg);
 	glPushMatrix();
 	glCallList(MID_FIRST_FLOOR);
 	glPopMatrix();
-	glUseProgram(shaderProg);
 
 
 	//STAIRS TO SECOND FLOOR
@@ -761,6 +759,102 @@ void render_display_lists()
 	bar_list();
 	first_floor_rear_list();
 }
+
+
+//Function to render a cube with a choice of
+//texture based or material based faces 
+//(independently). Specify your choice for 
+//each side by inputting the texture ID of
+//your desired texture for that face, or 
+//by entering NO_TEXTURES to use materials
+//instead
+void hybridcube(int top, int bottom, int left, int right, int front, int back)
+{
+	if (top == NO_TEXTURES)
+	{
+		glUseProgram(shaderProg);
+		// Top face
+		rquad(cube[4], cube[7], cube[6], cube[5], vnorm[4], vnorm[7], vnorm[6], vnorm[5]);
+	}
+	else
+	{
+		glUseProgram(textureProg);
+		glBindTexture(GL_TEXTURE_2D, tex_ids[top]);
+		// Top face
+		tex_quad(cube[4], cube[7], cube[6], cube[5], vnorm[4], vnorm[7], vnorm[6], vnorm[5]);
+	}
+
+	if (bottom == NO_TEXTURES)
+	{
+		glUseProgram(shaderProg);
+		// Bottom face
+		rquad(cube[0], cube[1], cube[2], cube[3], vnorm[0], vnorm[1], vnorm[2], vnorm[3]);
+	}
+	else
+	{
+		glUseProgram(textureProg);
+		glBindTexture(GL_TEXTURE_2D, tex_ids[bottom]);
+		// Bottom face
+		tex_quad(cube[0], cube[1], cube[2], cube[3], vnorm[0], vnorm[1], vnorm[2], vnorm[3]);
+	}
+
+	if (left == NO_TEXTURES)
+	{
+		glUseProgram(shaderProg);
+		// Left face
+		rquad(cube[0], cube[3], cube[7], cube[4], vnorm[0], vnorm[3], vnorm[7], vnorm[4]);
+	}
+	else
+	{
+		glUseProgram(textureProg);
+		glBindTexture(GL_TEXTURE_2D, tex_ids[left]);
+		// Left face
+		tex_quad(cube[0], cube[3], cube[7], cube[4], vnorm[0], vnorm[3], vnorm[7], vnorm[4]);
+	}
+
+	if (right == NO_TEXTURES)
+	{
+		glUseProgram(shaderProg);
+		// Right face
+		rquad(cube[1], cube[5], cube[6], cube[2], vnorm[1], vnorm[5], vnorm[6], vnorm[2]);
+	}
+	else
+	{
+		glUseProgram(textureProg);
+		glBindTexture(GL_TEXTURE_2D, tex_ids[right]);
+		// Right face
+		tex_quad(cube[1], cube[5], cube[6], cube[2], vnorm[1], vnorm[5], vnorm[6], vnorm[2]);
+	}
+
+	if (front == NO_TEXTURES)
+	{
+		glUseProgram(shaderProg);
+		// Front face
+		rquad(cube[2], cube[6], cube[7], cube[3], vnorm[2], vnorm[6], vnorm[7], vnorm[3]);
+	}
+	else
+	{
+		glUseProgram(textureProg);
+		glBindTexture(GL_TEXTURE_2D, tex_ids[front]);
+		// Front face
+		tex_quad(cube[2], cube[6], cube[7], cube[3], vnorm[2], vnorm[6], vnorm[7], vnorm[3]);
+	}
+
+	if (back == NO_TEXTURES)
+	{
+		glUseProgram(shaderProg);
+		// Back face
+		rquad(cube[0], cube[4], cube[5], cube[1], vnorm[0], vnorm[4], vnorm[5], vnorm[1]);
+	}
+	else
+	{
+		glUseProgram(textureProg);
+		glBindTexture(GL_TEXTURE_2D, tex_ids[back]);
+		// Back face
+		tex_quad(cube[0], cube[4], cube[5], cube[1], vnorm[0], vnorm[4], vnorm[5], vnorm[1]);
+	}
+}
+
 
 void texcube()
 {
@@ -1178,6 +1272,7 @@ void mid_first_floor_list()
 	glNewList(MID_FIRST_FLOOR, GL_COMPILE);
 	glPushAttrib(GL_CURRENT_BIT);
 
+	glUseProgram(textureProg);
 	//FIRST FLOOR WALKWAY Z NEG
 	glBindTexture(GL_TEXTURE_2D, tex_ids[WOOD_MID_SIDES]);
 	set_material(GL_FRONT, &faux_wood);
@@ -1185,22 +1280,25 @@ void mid_first_floor_list()
 	glTranslatef(20.0f, 2.0f, -42.5f);
 	glScalef(90.0f, 4.0f, 15.0f);
 	//colorcube();
-	texcube();
+	hybridcube(WOOD_MID_SIDES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
 	glPopMatrix();
 	//FIRST FLOOR WALKWAY Z POS
 	glPushMatrix();
 	glTranslatef(20.0f, 2.0f, 42.5f);
 	glScalef(90.0f, 4.0f, 15.0f);
 	//colorcube();
-	texcube();
+	//texcube();
+	hybridcube(WOOD_MID_SIDES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
 	glPopMatrix();
 	//FIRST FLOOR MID ENTRANCE FLOOR
+	glUseProgram(textureProg);
 	glBindTexture(GL_TEXTURE_2D, tex_ids[WOOD_MID_ENTRANCE]);
 	glPushMatrix();
 	glTranslatef(35.0f, 1.25f, 0.0f);
 	glScalef(20.0f, 2.5f, 80.0f);
 	//colorcube();
-	texcube();
+	//texcube();
+	hybridcube(WOOD_MID_ENTRANCE, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
 	glPopMatrix();
 	//FIRST FLOOR MID Z NEG FLOOR
 	glBindTexture(GL_TEXTURE_2D, tex_ids[WOOD_MID_SIDES]);
@@ -1208,14 +1306,16 @@ void mid_first_floor_list()
 	glTranslatef(5.0f, 1.25f, -30.0f);
 	glScalef(40.0f, 2.5f, 20.0f);
 	//colorcube();
-	texcube();
+	//texcube();
+	hybridcube(WOOD_MID_SIDES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
 	glPopMatrix();
 	//FIRST FLOOR MID Z POS FLOOR
 	glPushMatrix();
 	glTranslatef(5.0f, 1.25f, 30.0f);
 	glScalef(40.0f, 2.5f, 20.0f);
 	//colorcube();
-	texcube();
+	//texcube();
+	hybridcube(WOOD_MID_SIDES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
 	glPopMatrix();
 	//FIRST FLOOR MID STAGE FLOOR
 	glBindTexture(GL_TEXTURE_2D, tex_ids[WOOD_MID_ENTRANCE]);
@@ -1229,7 +1329,8 @@ void mid_first_floor_list()
 	glTranslatef(-38.75f, 1.25f, 0.0f);
 	glScalef(22.5f, 2.5f, 40.0f);
 	//colorcube();
-	texcube();
+	//texcube();
+	hybridcube(WOOD_MID_ENTRANCE, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
 	glPopMatrix();
 	//STAGE STAIRS
 	glPushMatrix();	//master push
@@ -1268,6 +1369,8 @@ void mid_first_floor_list()
 	//colorcube();
 	texcube();
 	glPopMatrix();
+
+	glUseProgram(shaderProg);
 
 	//FIRST FLOOR Z POS POOL
 	glPushMatrix();
@@ -2177,22 +2280,51 @@ void floor_list()
 	glNewList(FLOOR, GL_COMPILE);
 	glPushAttrib(GL_CURRENT_BIT);
 
-	//FLOOR
+	//MID FLOOR
 	glUseProgram(textureProg);
 	glBindTexture(GL_TEXTURE_2D, tex_ids[FLOOR_TILE]);
 	glPushMatrix();
 	//gl_color3f(0.0f, 0.25f, 0.5f);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0, 0);
-		glVertex3f(HOUSE_X, FLOOR_Y, HOUSE_Z);
-		glTexCoord2f(0, 30);
-		glVertex3f(HOUSE_X, FLOOR_Y, -HOUSE_Z);
-		glTexCoord2f(20, 30);
-		glVertex3f(-HOUSE_X, FLOOR_Y, -HOUSE_Z);
-		glTexCoord2f(20, 0);
-		glVertex3f(-HOUSE_X, FLOOR_Y, HOUSE_Z);
+		glVertex3f(25.0f, 0.0f, 20.0f);
+		glTexCoord2f(0, 10);
+		glVertex3f(25.0f, 0.0f, -20.0f);
+		glTexCoord2f(5, 10);
+		glVertex3f(-27.5f, 0.0f, -20.0f);
+		glTexCoord2f(5, 0);
+		glVertex3f(-27.5f, 0.0f, 20.0f);
 		glEnd();
 	glPopMatrix();
+
+	//Z NEG PATIO FLOOR
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0);
+	glVertex3f(45.0f, 0.0f, -35.0f);
+	glTexCoord2f(0, 3);
+	glVertex3f(65.0f, 0.0f, -35.0f);
+	glTexCoord2f(5, 3);
+	glVertex3f(65.0f, 0.0f, -5.0f);
+	glTexCoord2f(5, 0);
+	glVertex3f(45.0f, 0.0f, -5.0f);
+	glEnd();
+	glPopMatrix();
+
+	//Z POS PATIO FLOOR
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0);
+	glVertex3f(45.0f, 0.0f, 35.0f);
+	glTexCoord2f(0, 3);
+	glVertex3f(65.0f, 0.0f, 35.0f);
+	glTexCoord2f(5, 3);
+	glVertex3f(65.0f, 0.0f, 5.0f);
+	glTexCoord2f(5, 0);
+	glVertex3f(45.0f, 0.0f, 5.0f);
+	glEnd();
+	glPopMatrix();
+
 	glUseProgram(shaderProg);
 
 	//glPushMatrix();
@@ -2232,6 +2364,7 @@ void wall_list()
 		glEnd();
 	glPopMatrix();
 
+	glBindTexture(GL_TEXTURE_2D, tex_ids[WALLPAPER_NARROW]);
 	glPushMatrix();
 	//gl_color3f(0.5f, 0.25f, 0.25f);
 		glBegin(GL_QUADS);
