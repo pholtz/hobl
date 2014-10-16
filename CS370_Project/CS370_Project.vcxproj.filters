@@ -96,5 +96,17 @@
     <Image Include="window.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="stagewd.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="stagewdrot.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="wdgen.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="wdgenleg.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
