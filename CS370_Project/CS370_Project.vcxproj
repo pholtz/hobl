@@ -108,6 +108,7 @@
     <Image Include="wallpaper2.jpg" />
     <Image Include="wallpaperrot.jpg" />
     <Image Include="wdflr.jpg" />
+    <Image Include="window.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -93,5 +93,8 @@
     <Image Include="fltile.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="window.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
