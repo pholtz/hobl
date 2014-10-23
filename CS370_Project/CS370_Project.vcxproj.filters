@@ -108,5 +108,8 @@
     <Image Include="wdgenleg.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="dwood.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -98,6 +98,7 @@
   <ItemGroup>
     <Image Include="dlid.jpg" />
     <Image Include="drp.jpg" />
+    <Image Include="dwood.jpg" />
     <Image Include="et.bmp" />
     <Image Include="fltile.jpg" />
     <Image Include="jwart.jpg" />
