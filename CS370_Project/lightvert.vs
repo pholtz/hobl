@@ -151,6 +151,9 @@ void main()
 	vec3 eye = vec3(0.0,0.0,1.0);
 	vec4 color = vec4(0.0,0.0,0.0,0.0);
 
+	// TODO: Allow for blending
+	amb.a = 0.0;
+
 	// Compute transformed vertex position
 	gl_Position = gl_ModelViewProjectionMatrix*gl_Vertex;
 

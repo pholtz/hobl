@@ -11,6 +11,14 @@ MaterialType brass = {  { 0.33f, 0.22f, 0.03f, 1.0f },
 						{ 0.99f, 0.91f, 0.81f, 1.0f },
 											  27.8f };
 
+// Material properties for glass
+MaterialType glass = { 
+	{ 0.0f, 0.0f, 0.0f, 0.15f }, 
+	{ 0.55f, 0.55f, 0.55f, 0.15f }, 
+	{ 0.70f, 0.70f, 0.70f, 0.15f },
+	100.0f
+};
+
 //Taken from: http://www.it.hiof.no/~borres/j3d/explain/light/p-materials.html
 MaterialType emerald = {
 	{ 0.0215f, 0.1745f, 0.0215f, 1.0f },
@@ -56,6 +64,13 @@ MaterialType faux_wood = {
 	{ 0.28f, 0.16f, 0.1f, 1.0f },
 	{ 0.47f, 0.29f, 0.0f, 1.0f },
 	7.0f
+};
+
+MaterialType black_plastic = {
+	{ 0.0f, 0.0f, 0.0f, 1.0f },
+	{ 0.01f, 0.01f, 0.01, 1.0f },
+	{ 0.50f, 0.50f, 0.50, 1.0f },
+	32.0f
 };
 						
 void set_material(GLenum face, MaterialType *material)
