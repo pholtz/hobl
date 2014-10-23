@@ -146,7 +146,7 @@ char texture_files[NO_TEXTURES][20] = { "space.jpg", "et.bmp", "mn.bmp", "drp.jp
 #define CHAIR 14
 #define BAR 15
 #define FIRST_FLOOR_REAR 16
-#define BAR_CHAIR 16
+#define BAR_CHAIR 17
 
 // View modes
 #define ORTHOGRAPHIC 0
@@ -1101,6 +1101,7 @@ void first_floor_rear_list()
 	//HANGING WALL ART STAGE BACKDROP
 	glUseProgram(textureProg);
 	glBindTexture(GL_TEXTURE_2D, tex_ids[WALL_ART]);
+	glPushMatrix();
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 0);
 	glVertex3f(-55.0f, 2.5f, -20.0f);
@@ -1111,6 +1112,7 @@ void first_floor_rear_list()
 	glTexCoord2f(1, 0);
 	glVertex3f(-55.0f, 2.5f, 20.0f);
 	glEnd();
+	glPopMatrix();
 	glUseProgram(shaderProg);
 
 	glPopAttrib();
@@ -1210,6 +1212,7 @@ void bar_list()
 	glVertex3f(5.0f, 19.0f, -HOUSE_Z + 0.1f);
 	glEnd();
 	glPopMatrix();
+	//////////////
 	glPushMatrix();
 	glUseProgram(shaderProg);
 	glTranslatef(5.0f, 15.0f, -HOUSE_Z + 0.1f);
@@ -1244,13 +1247,12 @@ void bar_list()
 	glScalef(0.4f, 16.0f, 3.0f);
 	hybridcube(NO_TEXTURES, NO_TEXTURES, WALLPAPER_ROT, WALLPAPER_ROT, NO_TEXTURES, NO_TEXTURES);
 	glPopMatrix();
-	glTranslatef(0.0f, 0.0f, 2.25f);
+	glTranslatef(0.0f, 0.0f, 1.6f);
 	glPushMatrix();
-	glScalef(0.6f, 16.0f, 0.6f);
+	glScalef(0.5f, 16.0f, 0.5f);
 	hybridcube(NO_TEXTURES, NO_TEXTURES, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR);
 	glPopMatrix();
 	glPopMatrix();
-
 	///////////////
 	glPushMatrix();
 	glTranslatef(32.5f, 12.0f, -HOUSE_Z + 1.5f);
@@ -1258,9 +1260,9 @@ void bar_list()
 	glScalef(0.4f, 16.0f, 3.0f);
 	hybridcube(NO_TEXTURES, NO_TEXTURES, WALLPAPER_ROT, WALLPAPER_ROT, NO_TEXTURES, NO_TEXTURES);
 	glPopMatrix();
-	glTranslatef(0.0f, 0.0f, 2.25f);
+	glTranslatef(0.0f, 0.0f, 1.6f);
 	glPushMatrix();
-	glScalef(0.6f, 16.0f, 0.6f);
+	glScalef(0.5f, 16.0f, 0.5f);
 	hybridcube(NO_TEXTURES, NO_TEXTURES, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR);
 	glPopMatrix();
 	glPopMatrix();
@@ -1271,27 +1273,27 @@ void bar_list()
 	glTranslatef(7.5f, 4.0f, -38.0f);
 	glRotatef(-90, 0, 1, 0);
 	glCallList(BAR_CHAIR);
-	glTranslatef(0.0f, 0.0f, -2.5f);
+	glTranslatef(0.0f, 0.0f, -3.0f);
 	glCallList(BAR_CHAIR);
-	glTranslatef(0.0f, 0.0f, -2.5f);
+	glTranslatef(0.0f, 0.0f, -3.0f);
 	glCallList(BAR_CHAIR);
-	glTranslatef(0.0f, 0.0f, -2.5f);
+	glTranslatef(0.0f, 0.0f, -3.0f);
 	glCallList(BAR_CHAIR);
-	glTranslatef(0.0f, 0.0f, -2.5f);
+	glTranslatef(0.0f, 0.0f, -3.0f);
 	glCallList(BAR_CHAIR);
-	glTranslatef(0.0f, 0.0f, -2.5f);
+	glTranslatef(0.0f, 0.0f, -3.0f);
 	glCallList(BAR_CHAIR);
-	glTranslatef(0.0f, 0.0f, -2.5f);
+	glTranslatef(0.0f, 0.0f, -3.0f);
 	glCallList(BAR_CHAIR);
-	glTranslatef(0.0f, 0.0f, -2.5f);
+	glTranslatef(0.0f, 0.0f, -3.0f);
 	glCallList(BAR_CHAIR);
-	glTranslatef(0.0f, 0.0f, -2.5f);
+	glTranslatef(0.0f, 0.0f, -3.0f);
 	glCallList(BAR_CHAIR);
-	glTranslatef(0.0f, 0.0f, -2.5f);
+	glTranslatef(0.0f, 0.0f, -3.0f);
 	glCallList(BAR_CHAIR);
-	glTranslatef(0.0f, 0.0f, -2.5f);
+	glTranslatef(0.0f, 0.0f, -3.0f);
 	glCallList(BAR_CHAIR);
-	glTranslatef(0.0f, 0.0f, -2.5f);
+	glTranslatef(0.0f, 0.0f, -3.0f);
 	glCallList(BAR_CHAIR);
 	glPopMatrix();
 
@@ -3348,16 +3350,16 @@ void bar_chair_list()
 
 	glUseProgram(textureProg);
 	glBindTexture(GL_TEXTURE_2D, tex_ids[TABLE_WOOD]);
-	//CHAIR 1
+
 	//seat
 	glPushMatrix();
-	glTranslatef(0.0f, 3.5f, 0.0f);
+	glTranslatef(0.0f, 3.0f, 0.0f);
 	glScalef(1.5f, 0.2f, 1.5f);
 	hybridcube(TABLE_WOOD, TABLE_WOOD, TABLE_WOOD_LEG, TABLE_WOOD_LEG, TABLE_WOOD_LEG, TABLE_WOOD_LEG);
 	glPopMatrix();
 	//back
 	glPushMatrix();
-	glTranslatef(0.7f, 4.5f, 0.0f);
+	glTranslatef(0.7f, 4.25f, 0.0f);
 	glScalef(0.1f, 0.5f, 1.3f);
 	hybridcube(TABLE_WOOD_LEG, TABLE_WOOD_LEG, TABLE_WOOD, TABLE_WOOD, TABLE_WOOD_LEG, TABLE_WOOD_LEG);
 	glPopMatrix();
@@ -3365,25 +3367,25 @@ void bar_chair_list()
 	glBindTexture(GL_TEXTURE_2D, tex_ids[TABLE_WOOD_LEG]);
 	//leg 1
 	glPushMatrix();
-	glTranslatef(0.675f, 2.25f, 0.675f);
+	glTranslatef(0.675f, 2.0f, 0.675f);
 	glScalef(0.15f, 4.5f, 0.15f);
 	texcube();
 	glPopMatrix();
 	//leg 2
 	glPushMatrix();
-	glTranslatef(0.675f, 2.25f, -0.675f);
+	glTranslatef(0.675f, 2.0f, -0.675f);
 	glScalef(0.15f, 4.5f, 0.15f);
 	texcube();
 	glPopMatrix();
 	//leg 3
 	glPushMatrix();
-	glTranslatef(-0.675f, 1.75f, 0.675f);
+	glTranslatef(-0.675f, 1.25f, 0.675f);
 	glScalef(0.15f, 3.5f, 0.15f);
 	texcube();
 	glPopMatrix();
 	//leg 4
 	glPushMatrix();
-	glTranslatef(-0.675f, 1.75f, -0.675f);
+	glTranslatef(-0.675f, 1.25f, -0.675f);
 	glScalef(0.15f, 3.5f, 0.15f);
 	texcube();
 	glPopMatrix();
