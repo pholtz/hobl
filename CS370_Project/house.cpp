@@ -111,11 +111,18 @@ GLint texSampler;
 #define POOL 32
 #define DARK_WOOD 33
 #define DARK_WOOD_PILLAR 34
-#define NO_TEXTURES 35
+#define DARK_WOOD_ROT 35
+#define PAPER_WINDOW 36
+#define NO_TEXTURES 37
 // Texture indices
 GLuint tex_ids[NO_TEXTURES];
 // Texture files
-char texture_files[NO_TEXTURES][20] = { "space.jpg", "et.bmp", "mn.bmp", "drp.jpg", "dlid.jpg", "tile.png", "wdflrms.jpg", "wdflrme.jpg", "jwart.jpg", "wallpaper.jpg", "wallpaper2.jpg", "wallpaperrot.jpg", "fltile.jpg", "dsnow.jpg", "frostglass.jpg", "stagewd.jpg", "stagewdrot.jpg", "wdgen.jpg", "wdgenleg.jpg", "wdpillar.jpg", "wdstair.jpg", "wdstairrot.jpg", "railingart.png", "cherrywd.jpg", "cherrywdnar.jpg", "cherrywdrot.jpg", "cherrywdnarrot.jpg", "sand.jpg", "lpanel.jpg", "stagewdnar.jpg", "tanwall.jpg", "wdpillarrot.jpg", "pool.jpg", "dwood.jpg", "dpillar.jpg" };
+char texture_files[NO_TEXTURES][20] = { "space.jpg", "et.bmp", "mn.bmp", "drp.jpg", "dlid.jpg", "tile.png", 
+"wdflrms.jpg", "wdflrme.jpg", "jwart.jpg", "wallpaper.jpg", "wallpaper2.jpg", "wallpaperrot.jpg", "fltile.jpg", 
+"dsnow.jpg", "frostglass.jpg", "stagewd.jpg", "stagewdrot.jpg", "wdgen.jpg", "wdgenleg.jpg", "wdpillar.jpg", 
+"wdstair.jpg", "wdstairrot.jpg", "railingart.png", "cherrywd.jpg", "cherrywdnar.jpg", "cherrywdrot.jpg", 
+"cherrywdnarrot.jpg", "sand.jpg", "lpanel.jpg", "stagewdnar.jpg", "tanwall.jpg", "wdpillarrot.jpg", "pool.jpg", 
+"dwood.jpg", "dpillar.jpg", "dwoodrot.jpg", "paperwin.jpg" };
 /////////////////////////////
 
 #define RAD2DEG (180.0f/3.14159f)
@@ -187,11 +194,14 @@ GLfloat light0_pos[4] = { 50.0f, 30.0f, 45.0f, 1.0f };
 GLfloat light1_pos[4] = { -50.0f, 30.0f, 45.0f, 1.0f };
 GLfloat light2_pos[4] = { -50.0f, 30.0f, -45.0f, 1.0f };
 GLfloat light3_pos[4] = { 50.0f, 30.0f, -45.0f, 1.0f };
+GLfloat light4_pos[4] = { 35.0f, 5.0f, -35.0f, 1.0f };
 GLfloat light0_attenuation[3] = {3.0f, 0.0f, 0.0f};
 GLfloat light1_attenuation[3] = {3.0f, 0.0f, 0.0f};
 GLfloat light2_attenuation[3] = {3.0f, 0.0f, 0.0f };
 GLfloat light3_attenuation[3] = {3.0f, 0.0f, 0.0f };
-GLint num_lights = 4;
+GLfloat light4_attenuation[3] = { 3.0f, 0.0f, 0.0f };
+GLfloat ambient_color[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
+GLint num_lights = 5;
 
 //animation variables
 GLfloat fan_theta = 0;
@@ -291,9 +301,6 @@ int main(int argc, char *argv[])
 	//Enable alpha blending
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//enable lighting
-	glEnable(GL_LIGHTING);
 
 
 	//TEXTURE STUFF
@@ -650,10 +657,13 @@ void render_Scene()
 {
 
 	//Lighting
+	//4 corner lights
 	set_PointLightAttenuated(GL_LIGHT0, &white_light, light0_pos, light0_attenuation);
 	set_PointLightAttenuated(GL_LIGHT1, &white_light, light1_pos, light1_attenuation);
 	set_PointLightAttenuated(GL_LIGHT2, &white_light, light2_pos, light2_attenuation);
 	set_PointLightAttenuated(GL_LIGHT3, &white_light, light3_pos, light3_attenuation);
+	//blue bar light
+	set_PointLightAttenuated(GL_LIGHT4, &blue_light, light4_pos, light4_attenuation);
 
 	//FLAT ROOF WITH ACCENTS
 	glPushMatrix();
@@ -1125,16 +1135,19 @@ void bar_list()
 	glPushAttrib(GL_CURRENT_BIT);
 
 	//BAR
+	glUseProgram(textureProg);
+	//set_material(GL_FRONT_AND_BACK, &faux_wood);
+	glBindTexture(GL_TEXTURE_2D, tex_ids[CHERRY_WOOD_ROT]);
 	glPushMatrix();	//master push
 	glTranslatef(25.0f, 6.0f, -41.0f);
 	glPushMatrix();
 	glScalef(40.0f, 5.0f, 2.5f);
-	colorcube();
+	texcube();
 	glPopMatrix();
 	glTranslatef(0.0f, 2.75f, 0.0f);
 	glPushMatrix();
 	glScalef(42.0f, 0.5f, 4.0f);
-	colorcube();
+	texcube();
 	glPopMatrix();
 	glPopMatrix();	//master pop
 
@@ -1313,7 +1326,7 @@ void balcony_list()
 	glPushMatrix();
 	glTranslatef(0.0f, SECOND_FLOOR, 42.5f);
 	glScalef(150.0f, 0.25f, 15.0f);
-	hybridcube(DARK_WOOD, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
+	hybridcube(DARK_WOOD_ROT, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
 	glPopMatrix();
 	//SECOND FLOOR Z NEG SIDING
 	glPushMatrix();
@@ -1385,7 +1398,7 @@ void balcony_list()
 	glTranslatef(0.0f, SECOND_FLOOR, -42.5f);
 	glScalef(150.f, 0.25f, 15.0f);
 	//colorcube();
-	hybridcube(DARK_WOOD, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
+	hybridcube(DARK_WOOD_ROT, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
 	glPopMatrix();
 	//SECOND FLOOR Z POS SIDING
 	glPushMatrix();
@@ -1541,6 +1554,36 @@ void balcony_list()
 	//texcube();
 	hybridcube(NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, WALLPAPER_NARROW, NO_TEXTURES, NO_TEXTURES);
 	glPopMatrix();
+
+	//BALCONY WINDOWS (2 for now)
+	glUseProgram(textureProg);
+	glBindTexture(GL_TEXTURE_2D, tex_ids[PAPER_WINDOW]);
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 1);
+	glVertex3f(-59.5f, SECOND_FLOOR + 15.0f, 10.0f);
+	glTexCoord2f(0, 0);
+	glVertex3f(-59.5f, SECOND_FLOOR + 2.5f, 10.0f);
+	glTexCoord2f(1, 0);
+	glVertex3f(-59.5f, SECOND_FLOOR + 2.5f, 20.0f);
+	glTexCoord2f(1, 1);
+	glVertex3f(-59.5f, SECOND_FLOOR + 15.0f, 20.0f);
+	glEnd();
+	glPopMatrix();
+	///////////////
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 1);
+	glVertex3f(-59.5f, SECOND_FLOOR + 15.0f, -10.0f);
+	glTexCoord2f(0, 0);
+	glVertex3f(-59.5f, SECOND_FLOOR + 2.5f, -10.0f);
+	glTexCoord2f(1, 0);
+	glVertex3f(-59.5f, SECOND_FLOOR + 2.5f, -20.0f);
+	glTexCoord2f(1, 1);
+	glVertex3f(-59.5f, SECOND_FLOOR + 15.0f, -20.0f);
+	glEnd();
+	glPopMatrix();
+	glUseProgram(shaderProg);
 
 	//ENTRANCE SIDING
 	glPushMatrix();
@@ -2089,58 +2132,63 @@ void entrance_list()
 	glScalef(20.0f, 1.0f, 0.25f);
 	colorcube();
 	glPopMatrix();
+	glUseProgram(textureProg);
 	// back bannister 1
 	glTranslatef(10.0f, 1.0f, 0.0f);
 	glPushMatrix();
 	glScalef(0.5f, 10.0f, 0.5f);
-	colorcube();
+	hybridcube(NO_TEXTURES, NO_TEXTURES, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR);
 	glPopMatrix();
 	//back bannister 2
 	glTranslatef(0.0f, 0.0f, -10.0f);
 	glPushMatrix();
 	glScalef(0.5f, 10.0f, 0.5f);
-	colorcube();
+	hybridcube(NO_TEXTURES, NO_TEXTURES, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR);
 	glPopMatrix();
+
 	//entrance small stairs
 	glTranslatef(-20.5f, -5.75f, 5.0f);
 	glPushMatrix();
 	glScalef(1.0f, 1.5f, 10.0f);
-	colorcube();
+	hybridcube(WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR);
 	glPopMatrix();
 	glTranslatef(-1.0f, -0.25f, 0.0f);
 	glPushMatrix();
 	glScalef(1.0f, 1.0f, 10.0f);
-	colorcube();
+	hybridcube(WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR);
 	glPopMatrix();
 	glTranslatef(-1.0f, -0.25f, 0.0f);
 	glPushMatrix();
 	glScalef(1.0f, 0.5f, 10.0f);
-	colorcube();
+	hybridcube(WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR);
 	glPopMatrix();
+
 	//mid bannister 1
 	glTranslatef(2.75f, 6.0f, 5.0f);
 	glPushMatrix();
 	glScalef(0.5f, 10.0f, 0.5f);
-	colorcube();
+	hybridcube(NO_TEXTURES, NO_TEXTURES, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR);
 	glPopMatrix();
 	//mid bannister 2
 	glTranslatef(0.0f, 0.0f, -10.0f);
 	glPushMatrix();
 	glScalef(0.5f, 10.0f, 0.5f);
-	colorcube();
+	hybridcube(NO_TEXTURES, NO_TEXTURES, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR);
 	glPopMatrix();
 	//front bannister 1
 	glTranslatef(-3.0f, -1.0f, 0.0f);
 	glPushMatrix();
 	glScalef(0.5f, 12.0f, 0.5f);
-	colorcube();
+	hybridcube(NO_TEXTURES, NO_TEXTURES, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR);
 	glPopMatrix();
 	//front bannister 2
 	glTranslatef(0.0f, 0.0f, 10.0f);
 	glPushMatrix();
 	glScalef(0.5f, 12.0f, 0.5f);
-	colorcube();
+	hybridcube(NO_TEXTURES, NO_TEXTURES, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR);
 	glPopMatrix();
+	glUseProgram(shaderProg);
+
 	//ARCHWAY -- support beam 1
 	glTranslatef(11.0f, 6.0f, 0.0f);
 	glPushMatrix();
@@ -3179,9 +3227,8 @@ void wall_list()
 
 	glUseProgram(textureProg);
 	glBindTexture(GL_TEXTURE_2D, tex_ids[WALLPAPER_NARROW]);
-	//WALLS
+	//ENTRANCE WALL
 	glPushMatrix();
-	//gl_color3f(0.5f, 0.25f, 0.25f);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0, 0);
 		glVertex3f(HOUSE_X, WALL_Y_LOWER + 4.0f, HOUSE_Z);
@@ -3197,7 +3244,6 @@ void wall_list()
 	//Z POS WALL
 	glBindTexture(GL_TEXTURE_2D, tex_ids[WALLPAPER_NARROW]);
 	glPushMatrix();
-	//gl_color3f(0.5f, 0.25f, 0.25f);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0, 0);
 		glVertex3f(-HOUSE_X, WALL_Y_LOWER, HOUSE_Z);
@@ -3212,7 +3258,6 @@ void wall_list()
 
 	//Z NEG WALL
 	glPushMatrix();
-	//gl_color3f(0.5f, 0.25f, 0.25f);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0, 0);
 		glVertex3f(-HOUSE_X, WALL_Y_LOWER, -HOUSE_Z);
@@ -3228,7 +3273,6 @@ void wall_list()
 	glUseProgram(shaderProg);
 
 	glPushMatrix();
-	//gl_color3f(0.5f, 0.25f, 0.25f);
 	glBegin(GL_QUADS);
 	glVertex3f(-HOUSE_X, WALL_Y_LOWER, HOUSE_Z);
 	glVertex3f(-HOUSE_X, WALL_Y_UPPER, HOUSE_Z);
