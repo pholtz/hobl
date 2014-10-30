@@ -124,7 +124,8 @@ GLint texSampler;
 #define CHAND_PAPER 45
 #define TABLECLOTH 46
 #define SHOJI 47
-#define NO_TEXTURES 48
+#define SILVER_METAL 48
+#define NO_TEXTURES 49
 // Texture indices
 GLuint tex_ids[NO_TEXTURES];
 // Texture files
@@ -135,7 +136,7 @@ char texture_files[NO_TEXTURES][20] = { "space.jpg", "et.bmp", "mn.bmp", "drp.jp
 "cherrywdnarrot.jpg", "sand.jpg", "lpanel.jpg", "stagewdnar.jpg", "tanwall.jpg", "wdpillarrot.jpg", "pool.jpg", 
 "dwood.jpg", "dpillar.jpg", "dwoodrot.jpg", "paperwin.jpg", "lwrbar.jpg", "barwd.jpg", "wdflrsides.jpg", 
 "redfelt.jpg", "dstair.jpg", "dstairrot.jpg", "dpillarrot.jpg", "wdflrus.jpg", "chandppr.jpg", "tablecloth.jpg",
-"shoji.png"};
+"shoji.png", "smetal.jpg"};
 /////////////////////////////
 
 #define RAD2DEG (180.0f/3.14159f)
@@ -230,7 +231,6 @@ GLUquadricObj *lightbulb = gluNewQuadric();
 GLUquadricObj *bowl = gluNewQuadric();
 GLUquadricObj *soda_can;
 GLUquadricObj* moon;
-GLUquadricObj* earth;
 GLUquadricObj* window;
 GLUquadricObj* quadric;
 
@@ -323,10 +323,6 @@ int main(int argc, char *argv[])
 	moon = gluNewQuadric();
 	gluQuadricDrawStyle(moon, GLU_FILL);
 	gluQuadricTexture(moon, GL_TRUE);
-
-	earth = gluNewQuadric();
-	gluQuadricDrawStyle(earth, GLU_FILL);
-	gluQuadricTexture(earth, GL_TRUE);
 
 	soda_can = gluNewQuadric();
 	gluQuadricDrawStyle(soda_can, GLU_FILL);
@@ -1697,6 +1693,116 @@ void balcony_list()
 	glPopMatrix();
 
 
+	//Z NEG WALKWAY DOORS (2 sets for now)
+	glPushMatrix();	//first set
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 1);
+	glVertex3f(-30.0f, SECOND_FLOOR + 15.0f, -HOUSE_Z + 0.05f);
+	glTexCoord2f(0, 0);
+	glVertex3f(-30.0f, SECOND_FLOOR, -HOUSE_Z + 0.05f);
+	glTexCoord2f(1, 0);
+	glVertex3f(-20.0f, SECOND_FLOOR, -HOUSE_Z + 0.05f);
+	glTexCoord2f(1, 1);
+	glVertex3f(-20.0f, SECOND_FLOOR + 15.0f, -HOUSE_Z + 0.05f);
+	glEnd();
+	glPopMatrix();
+	//////////////
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 1);
+	glVertex3f(-20.0f, SECOND_FLOOR + 15.0f, -HOUSE_Z + 0.05f);
+	glTexCoord2f(0, 0);
+	glVertex3f(-20.0f, SECOND_FLOOR, -HOUSE_Z + 0.05f);
+	glTexCoord2f(1, 0);
+	glVertex3f(-10.0f, SECOND_FLOOR, -HOUSE_Z + 0.05f);
+	glTexCoord2f(1, 1);
+	glVertex3f(-10.0f, SECOND_FLOOR + 15.0f, -HOUSE_Z + 0.05f);
+	glEnd();
+	glPopMatrix();
+	////////////// 2nd set
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 1);
+	glVertex3f(20.0f, SECOND_FLOOR + 15.0f, -HOUSE_Z + 0.05f);
+	glTexCoord2f(0, 0);
+	glVertex3f(20.0f, SECOND_FLOOR, -HOUSE_Z + 0.05f);
+	glTexCoord2f(1, 0);
+	glVertex3f(30.0f, SECOND_FLOOR, -HOUSE_Z + 0.05f);
+	glTexCoord2f(1, 1);
+	glVertex3f(30.0f, SECOND_FLOOR + 15.0f, -HOUSE_Z + 0.05f);
+	glEnd();
+	glPopMatrix();
+	//////////////
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 1);
+	glVertex3f(30.0f, SECOND_FLOOR + 15.0f, -HOUSE_Z + 0.05f);
+	glTexCoord2f(0, 0);
+	glVertex3f(30.0f, SECOND_FLOOR, -HOUSE_Z + 0.05f);
+	glTexCoord2f(1, 0);
+	glVertex3f(40.0f, SECOND_FLOOR, -HOUSE_Z + 0.05f);
+	glTexCoord2f(1, 1);
+	glVertex3f(40.0f, SECOND_FLOOR + 15.0f, -HOUSE_Z + 0.05f);
+	glEnd();
+	glPopMatrix();
+	//////////////
+
+
+	//Z POS WALKWAY DOORS (2 sets for now)
+	glPushMatrix();	//first set
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 1);
+	glVertex3f(-30.0f, SECOND_FLOOR + 15.0f, HOUSE_Z - 0.05f);
+	glTexCoord2f(0, 0);
+	glVertex3f(-30.0f, SECOND_FLOOR, HOUSE_Z - 0.05f);
+	glTexCoord2f(1, 0);
+	glVertex3f(-20.0f, SECOND_FLOOR, HOUSE_Z - 0.05f);
+	glTexCoord2f(1, 1);
+	glVertex3f(-20.0f, SECOND_FLOOR + 15.0f, HOUSE_Z - 0.05f);
+	glEnd();
+	glPopMatrix();
+	//////////////
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 1);
+	glVertex3f(-20.0f, SECOND_FLOOR + 15.0f, HOUSE_Z - 0.05f);
+	glTexCoord2f(0, 0);
+	glVertex3f(-20.0f, SECOND_FLOOR, HOUSE_Z - 0.05f);
+	glTexCoord2f(1, 0);
+	glVertex3f(-10.0f, SECOND_FLOOR, HOUSE_Z - 0.05f);
+	glTexCoord2f(1, 1);
+	glVertex3f(-10.0f, SECOND_FLOOR + 15.0f, HOUSE_Z - 0.05f);
+	glEnd();
+	glPopMatrix();
+	////////////// 2nd set
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 1);
+	glVertex3f(20.0f, SECOND_FLOOR + 15.0f, HOUSE_Z - 0.05f);
+	glTexCoord2f(0, 0);
+	glVertex3f(20.0f, SECOND_FLOOR, HOUSE_Z - 0.05f);
+	glTexCoord2f(1, 0);
+	glVertex3f(30.0f, SECOND_FLOOR, HOUSE_Z - 0.05f);
+	glTexCoord2f(1, 1);
+	glVertex3f(30.0f, SECOND_FLOOR + 15.0f, HOUSE_Z - 0.05f);
+	glEnd();
+	glPopMatrix();
+	//////////////
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 1);
+	glVertex3f(30.0f, SECOND_FLOOR + 15.0f, HOUSE_Z - 0.05f);
+	glTexCoord2f(0, 0);
+	glVertex3f(30.0f, SECOND_FLOOR, HOUSE_Z - 0.05f);
+	glTexCoord2f(1, 0);
+	glVertex3f(40.0f, SECOND_FLOOR, HOUSE_Z - 0.05f);
+	glTexCoord2f(1, 1);
+	glVertex3f(40.0f, SECOND_FLOOR + 15.0f, HOUSE_Z - 0.05f);
+	glEnd();
+	glPopMatrix();
+	//////////////
+
+
 	//ENTRANCE SIDING
 	glPushMatrix();
 	glTranslatef(65.1f, SECOND_FLOOR + 1.0f, 0.0f);
@@ -1742,13 +1848,13 @@ void mid_first_floor_list()
 	glPushMatrix();
 	glTranslatef(5.0f, 1.25f, -30.0f);
 	glScalef(40.0f, 2.5f, 20.0f);
-	hybridcube(WOOD_MID_SIDES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
+	hybridcube(WOOD_MID_SIDES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, WOOD_FLOOR_SIDING, NO_TEXTURES);
 	glPopMatrix();
 	//FIRST FLOOR MID Z POS FLOOR
 	glPushMatrix();
 	glTranslatef(5.0f, 1.25f, 30.0f);
 	glScalef(40.0f, 2.5f, 20.0f);
-	hybridcube(WOOD_MID_SIDES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
+	hybridcube(WOOD_MID_SIDES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, WOOD_FLOOR_SIDING);
 	glPopMatrix();
 	//FIRST FLOOR MID STAGE FLOOR
 	glBindTexture(GL_TEXTURE_2D, tex_ids[STAGE_WOOD]);
@@ -2221,8 +2327,7 @@ void entrance_list()
 	glTranslatef(-15.0f, 0.0f, 0.0f);
 	glPushMatrix();
 	glScalef(20.0f, 4.0f, 10.0f);
-	//texcube();
-	hybridcube(WOOD_MID_SIDES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
+	hybridcube(WOOD_MID_SIDES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, WOOD_FLOOR_SIDING, WOOD_FLOOR_SIDING);
 	glPopMatrix();
 	//railing
 	glUseProgram(textureProg);
@@ -2351,7 +2456,7 @@ void entrance_list()
 
 	//PILLARS -- Z NEG
 	glUseProgram(textureProg);
-	glBindTexture(GL_TEXTURE_2D, tex_ids[WOOD_PILLAR]);
+	glBindTexture(GL_TEXTURE_2D, tex_ids[DARK_WOOD_PILLAR]);
 	glPushMatrix();	//master push
 	glTranslatef(65.25f, 22.0f, -15.25f);
 	glPushMatrix();
@@ -2479,8 +2584,6 @@ void table_list()
 	glNewList(TABLE, GL_COMPILE);
 	glPushAttrib(GL_CURRENT_BIT);
 
-	//TABLE
-	glPushMatrix();
 	//top
 	glPushMatrix();
 	glTranslatef(0.0f, 2.625f, 0.0f);
@@ -2493,15 +2596,50 @@ void table_list()
 	glBindTexture(GL_TEXTURE_2D, tex_ids[TABLECLOTH]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 0);
-	glVertex3f(1.125f, 2.76f, 0.5f);
+	glVertex3f(1.126f, 2.76f, 0.5f);
 	glTexCoord2f(0, 1);
-	glVertex3f(1.125f, 2.76f, -0.5f); 
+	glVertex3f(1.126f, 2.76f, -0.5f); 
 	glTexCoord2f(2, 1);
-	glVertex3f(-1.125f, 2.76f, -0.5f);
+	glVertex3f(-1.126f, 2.76f, -0.5f);
 	glTexCoord2f(2, 0);
-	glVertex3f(-1.125f, 2.76f, 0.5f);
+	glVertex3f(-1.126f, 2.76f, 0.5f);
 	glEnd();
 	glPopMatrix();
+	//////////////
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0);
+	glVertex3f(1.126f, 2.76f, 0.5f);
+	glTexCoord2f(0, 1);
+	glVertex3f(1.126f, 2.76f, -0.5f);
+	glTexCoord2f(1, 1);
+	glVertex3f(1.126f, 2.0f, -0.5f);
+	glTexCoord2f(1, 0);
+	glVertex3f(1.126f, 2.0f, 0.5f);
+	glEnd();
+	glPopMatrix();
+	//////////////
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0);
+	glVertex3f(-1.126f, 2.76f, 0.5f);
+	glTexCoord2f(0, 1);
+	glVertex3f(-1.126f, 2.76f, -0.5f);
+	glTexCoord2f(1, 1);
+	glVertex3f(-1.126f, 2.0f, -0.5f);
+	glTexCoord2f(1, 0);
+	glVertex3f(-1.126f, 2.0f, 0.5f);
+	glEnd();
+	glPopMatrix();
+
+	//LANTERN
+	glPushMatrix();
+	glTranslatef(0.2f, 3.25f, -0.5f);
+	glRotatef(30, 0, 1, 0);
+	glScalef(0.5f, 1.0f, 0.5f);
+	hybridcube(NO_TEXTURES, NO_TEXTURES, CHAND_PAPER, CHAND_PAPER, CHAND_PAPER, CHAND_PAPER);
+	glPopMatrix();
+
 
 	//leg 1
 	glBindTexture(GL_TEXTURE_2D, tex_ids[TABLE_WOOD_LEG]);
@@ -2529,30 +2667,50 @@ void table_list()
 	texcube();
 	glPopMatrix();
 
-	glPopMatrix();
-
 	//SODA CAN
 	glUseProgram(textureProg);	//go to the texture program
 	glPushMatrix();
-	glTranslatef(0.0f, 3.25f, 0.5f);
+	glTranslatef(0.4f, 3.55f, 0.5f);
+	//////
+	glPushMatrix();
 	glRotatef(90, 1, 0, 0);
 	glBindTexture(GL_TEXTURE_2D, tex_ids[DR_PEPPER]);
 	gluCylinder(soda_can, 0.15f, 0.15f, 0.75f, 20, 20);
+	glPopMatrix();
+	//////
+	glPushMatrix();
+	glTranslatef(0.0f, -0.75f, 0.0f);
+	glRotatef(90, 1, 0, 0);
+	glBindTexture(GL_TEXTURE_2D, tex_ids[SILVER_METAL]);
+	gluCylinder(soda_can, 0.15, 0.125, 0.05, 20, 20);
+	glPopMatrix();
+	//////
+	glPushMatrix();
+	glTranslatef(0.0f, 0.05f, 0.0f);
+	glRotatef(90, 1, 0, 0);
+	glBindTexture(GL_TEXTURE_2D, tex_ids[SILVER_METAL]);
+	gluCylinder(soda_can, 0.125, 0.15, 0.05, 20, 20);
+	glPopMatrix();
+	//////
+	glPushMatrix();
+	glTranslatef(0.0f, 0.05f, 0.0f);
+	glRotatef(90, 1, 0, 0);
 	glBindTexture(GL_TEXTURE_2D, tex_ids[LID]);
-	gluDisk(soda_can, 0.0f, 0.15f, 20, 20);
+	gluDisk(soda_can, 0.0f, 0.125f, 20, 20);
+	glPopMatrix();
 	glPopMatrix();
 	glUseProgram(shaderProg);	//switch back to the shader program
 
 	//FRUIT BOWL
 	set_material(GL_FRONT, &white_rubber);
 	glPushMatrix();
-	glTranslatef(-0.5f, 2.5f, -0.5f);
+	glTranslatef(-0.4f, 2.75f, 0.0f);
 	glPushMatrix();
 	glRotatef(-90, 1, 0, 0);
-	gluCylinder(bowl, 0.25f, 0.5f, 0.5f, 20, 20);
+	gluCylinder(bowl, 0.25f, 0.4f, 0.5f, 20, 20);
 	glPopMatrix();
 	////////////////
-	glTranslatef(0.0f, 0.01f, 0.0f);
+	glTranslatef(0.0f, 0.02f, 0.0f);
 	glPushMatrix();
 	glRotatef(-90, 1, 0, 0);
 	gluDisk(bowl, 0.0f, 0.25f, 20, 20);
@@ -2565,7 +2723,7 @@ void table_list()
 	glPushMatrix();
 	GLUquadricObj *fruit = gluNewQuadric();
 	//gl_color3f(1.0f, 1.0f, 0.0f);
-	glTranslatef(-0.5f, 2.75f, -0.4f);
+	glTranslatef(-0.4f, 3.0f, 0.0f);
 	gluSphere(bowl, 0.1f, 10, 10);
 	glTranslatef(0.1f, 0.2f, 0.0f);
 	gluSphere(bowl, 0.12, 10, 10);
@@ -2767,6 +2925,11 @@ void roof_list()
 
 	glPushMatrix();
 	glTranslatef(35.0f, 20.0f, -20.0f);
+	draw_chandelier();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(10.0f, 20.0f, 0.0f);
 	draw_chandelier();
 	glPopMatrix();
 
