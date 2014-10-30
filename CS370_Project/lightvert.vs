@@ -157,6 +157,7 @@ void main()
 	// Compute transformed vertex position
 	gl_Position = gl_ModelViewProjectionMatrix*gl_Vertex;
 
+
 	// TODO: Transform vertex to eye coordinates
 	ecPosition = gl_ModelViewMatrix * gl_Vertex;
 	ecPosition3 = (vec3(ecPosition)) / ecPosition.w;

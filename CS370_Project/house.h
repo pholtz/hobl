@@ -19,4 +19,4 @@
 
 #define WALKSPD				300.0f
 #define FLY					//comment this out to remove flying and add boundary clipping
-//#define FAN
+#define FAN
