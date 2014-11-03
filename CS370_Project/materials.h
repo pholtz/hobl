@@ -66,6 +66,14 @@ MaterialType faux_wood = {
 	7.0f
 };
 
+//Created using Mated
+MaterialType light_wood = {
+	{ 0.44f, 0.34f, 0.2f, 1.0f },
+	{ 0.48f, 0.36f, 0.25f, 1.0f },
+	{ 0.67f, 0.49f, 0.0f, 1.0f },
+	7.0f
+};
+
 MaterialType black_plastic = {
 	{ 0.0f, 0.0f, 0.0f, 1.0f },
 	{ 0.01f, 0.01f, 0.01, 1.0f },
