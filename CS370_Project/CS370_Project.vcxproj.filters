@@ -57,22 +57,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="et.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="mn.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="space.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="drp.jpg">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="dlid.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="wdflr.jpg">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="tile.png">
@@ -91,9 +79,6 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="fltile.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="window.jpg">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="stagewd.jpg">

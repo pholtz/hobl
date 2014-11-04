@@ -17,7 +17,7 @@ Unfinished Business:
 -Entrance Railing Lattice
 -Stage Railings
 -Texture ceiling with genwood texture
--Better bar & bar chairs, shelf backdrop
+-Bar shelf backdrop
 -Add rocks and sand lines into mid sand
 -Decorate/embellish the walls and floors with smaller objects
 
@@ -129,7 +129,11 @@ GLint texSampler;
 #define STAGE_WOOD_STAIR_ROT 52
 #define WOOD_SMALL 53
 #define DARK_WOOD_SMALL 54
-#define NO_TEXTURES 55
+#define ORANGE 55
+#define STAGE_WOOD_PILLAR 56
+#define STAGE_WOOD_PILLAR_ROT 57
+#define STAGE_WOOD_PLANK 58
+#define NO_TEXTURES 59
 // Texture indices
 GLuint tex_ids[NO_TEXTURES];
 // Texture files
@@ -137,11 +141,12 @@ char texture_files[NO_TEXTURES][20] = {"tb.jpg", "drp.jpg", "dlid.jpg", "tile.pn
 "wdflrms.jpg", "wdflrme.jpg", "jwart.jpg", "wallpaper.jpg", "wallpaper2.jpg", "wallpaperrot.jpg", "fltile.jpg", 
 "dsnow.jpg", "frostglass.jpg", "stagewd.jpg", "stagewdrot.jpg", "wdgen.jpg", "wdgenleg.jpg", "wdpillar.jpg", 
 "wdstair.jpg", "wdstairrot.jpg", "railingart.png", "sand.jpg", "lpanel.jpg", "stagewdnar.jpg", "tanwall.jpg", 
-"wdpillarrot.jpg", "pool.jpg", "dwood.jpg", "dpillar.jpg", "dwoodrot.jpg", "paperwin.jpg", "lwrbar.jpg", 
+"wdpillarrot.jpg", "pool.jpg", "dwood.jpg", "dpillar.jpg", "dwoodrot.jpg", "paperwin.jpg", "blueglass.jpg", 
 "barwd.jpg", "wdflrsides.jpg", "redfelt.jpg", "dstair.jpg", "dstairrot.jpg", "dpillarrot.jpg", "wdflrus.jpg", 
 "chandppr.jpg", "tablecloth.jpg","shoji.png", "smetal.jpg", "wdflrsidesplank.jpg", "dplank.jpg", "dplankrot.jpg", 
 "wdplank.jpg", "wdplankrot.jpg","wallpanel.jpg", "stagewdlsides.jpg", "stagewdssides.jpg", "stagewdstair.jpg", 
-"stagewdstairrot.jpg", "wdsmall.jpg", "dwoodsmall.jpg"};
+"stagewdstairrot.jpg", "wdsmall.jpg", "dwoodsmall.jpg", "orange.jpg", "stagewdp.jpg", "stagewdprot.jpg", 
+"stagewdplank.jpg"};
 /////////////////////////////
 
 #define RAD2DEG (180.0f/3.14159f)
@@ -219,7 +224,15 @@ GLfloat light1_attenuation[3] = {3.0f, 0.0f, 0.0f};
 GLfloat light2_attenuation[3] = {3.0f, 0.0f, 0.0f };
 GLfloat light3_attenuation[3] = {3.0f, 0.0f, 0.0f };
 GLfloat light4_attenuation[3] = { 3.0f, 0.0f, 0.0f };
-GLfloat ambient_color[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
+GLfloat ambient_color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat light_off[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+//lighting controls
+GLboolean light0_toggle = true;
+GLboolean light1_toggle = true;
+GLboolean light2_toggle = true;
+GLboolean light3_toggle = true;
+GLboolean light4_toggle = true;
+//////////
 GLint num_lights = 5;
 
 //animation variables
@@ -253,7 +266,7 @@ void rquad(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat n1[],
 void div_quad(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat n1[], GLfloat n2[], GLfloat n3[], GLfloat n4[], int n);
 void render_display_lists();
 bool load_textures();
-void texture_Scene();
+void render_lights();
 void texcube();
 void tex_quad(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat n1[], GLfloat n2[], GLfloat n3[], GLfloat n4[]);
 void hybridcube(int top, int bottom, int left, int right, int front, int back);
@@ -406,16 +419,12 @@ void display()
 	//set the camera position
 	gluLookAt(eye[X], eye[Y], eye[Z], at[X], at[Y], at[Z], up[X], up[Y], up[Z]);
 
+	//output the fps string
+	output_fps(fps_str);
+
 	// Render scene
 	glUseProgram(lightProg);
 	render_Scene();
-
-	//Texture Scene (Light orbs)
-	glUseProgram(textureProg);
-	texture_Scene();
-
-	//output the fps string
-	output_fps(fps_str);
 
 	// Flush buffer
 	glFlush();
@@ -563,6 +572,26 @@ void keyfunc(unsigned char key, int x, int y)
 		light_toggle_flag = !light_toggle_flag;
 	}
 
+	if (key == '1')
+	{
+		light0_toggle = !light0_toggle;
+	}
+	else if (key == '2')
+	{
+		light1_toggle = !light1_toggle;
+	}
+	else if (key == '3')
+	{
+		light2_toggle = !light2_toggle;
+	}
+	else if (key == '4')
+	{
+		light3_toggle = !light3_toggle;
+	}
+	else if (key == '5')
+	{
+		light4_toggle = !light4_toggle;
+	}
 	// Redraw screen
 	glutPostRedisplay();
 }
@@ -613,7 +642,10 @@ void idlefunc()
 		}
 	}
 
-	sprintf(fps_str, "%f", fps);
+	if ((int)time % 10 == 0)
+	{
+		sprintf(fps_str, "%3.2f", fps);
+	}
 
 	// Render scene
 	glutPostRedisplay();
@@ -662,7 +694,7 @@ void output_fps(char *string)
 	glUseProgram(defaultShaderProg);
 
 	glColor3f(1.0f, 1.0f, 0.0f);
-	glRasterPos2f(-1.0f, 0.9f);
+	glRasterPos2f(-0.975f, 0.97f);
 	for (int i = 0; i < (int)strlen(string); i++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, string[i]);
 	}
@@ -679,7 +711,7 @@ void output_fps(char *string)
 }
 
 
-void texture_Scene()
+void render_lights()
 {
 	//draw lightbulbs
 	glPushMatrix();
@@ -699,20 +731,62 @@ void texture_Scene()
 	glTranslatef(light3_pos[0], light3_pos[1], light3_pos[2]);
 	gluSphere(moon, 1.0f, 20, 20);
 	glPopMatrix();
+
+	//Lighting
+	//4 corner lights
+	if (light0_toggle)
+	{
+		set_PointLightAttenuated(GL_LIGHT0, &white_light, light0_pos, light0_attenuation);
+	}
+	else
+	{
+		set_PointLightAttenuated(GL_LIGHT0, &black_light, light0_pos, light0_attenuation);
+	}
+
+	if (light1_toggle)
+	{
+		set_PointLightAttenuated(GL_LIGHT1, &white_light, light1_pos, light1_attenuation);
+	}
+	else
+	{
+		set_PointLightAttenuated(GL_LIGHT1, &black_light, light1_pos, light1_attenuation);
+	}
+
+	if (light2_toggle)
+	{
+		set_PointLightAttenuated(GL_LIGHT2, &white_light, light2_pos, light2_attenuation);
+	}
+	else
+	{
+		set_PointLightAttenuated(GL_LIGHT2, &black_light, light2_pos, light2_attenuation);
+	}
+
+	if (light3_toggle)
+	{
+		set_PointLightAttenuated(GL_LIGHT3, &white_light, light3_pos, light3_attenuation);
+	}
+	else
+	{
+		set_PointLightAttenuated(GL_LIGHT3, &black_light, light3_pos, light3_attenuation);
+	}
+
+	if (light4_toggle)
+	{
+		//blue bar light
+		set_AmbientLight(ambient_color);
+	}
+	else
+	{
+		set_AmbientLight(light_off);
+	}
 }
 
 // Scene render function
 void render_Scene()
 {
-
-	//Lighting
-	//4 corner lights
-	set_PointLightAttenuated(GL_LIGHT0, &white_light, light0_pos, light0_attenuation);
-	set_PointLightAttenuated(GL_LIGHT1, &white_light, light1_pos, light1_attenuation);
-	set_PointLightAttenuated(GL_LIGHT2, &white_light, light2_pos, light2_attenuation);
-	set_PointLightAttenuated(GL_LIGHT3, &white_light, light3_pos, light3_attenuation);
-	//blue bar light
-	set_PointLightAttenuated(GL_LIGHT4, &blue_light, light4_pos, light4_attenuation);
+	glUseProgram(textureProg);
+	render_lights();
+	glUseProgram(lightProg);
 
 	//FLAT ROOF WITH ACCENTS
 	glPushMatrix();
@@ -802,262 +876,6 @@ void render_display_lists()
 }
 
 
-//Function to render a cube with a choice of
-//texture based or material based faces 
-//(independently). Specify your choice for 
-//each side by inputting the texture ID of
-//your desired texture for that face, or 
-//by entering NO_TEXTURES to use materials
-//instead
-void hybridcube(int top, int bottom, int left, int right, int front, int back)
-{
-	if (top == NO_TEXTURES)
-	{
-		glUseProgram(lightProg);
-		// Top face
-		rquad(cube[4], cube[7], cube[6], cube[5], vnorm[4], vnorm[7], vnorm[6], vnorm[5]);
-	}
-	else
-	{
-		glUseProgram(textureProg);
-		glBindTexture(GL_TEXTURE_2D, tex_ids[top]);
-		// Top face
-		tex_quad(cube[4], cube[7], cube[6], cube[5], vnorm[4], vnorm[7], vnorm[6], vnorm[5]);
-	}
-
-	if (bottom == NO_TEXTURES)
-	{
-		glUseProgram(lightProg);
-		// Bottom face
-		rquad(cube[1], cube[2], cube[3], cube[0], vnorm[0], vnorm[1], vnorm[2], vnorm[3]);
-	}
-	else
-	{
-		glUseProgram(textureProg);
-		glBindTexture(GL_TEXTURE_2D, tex_ids[bottom]);
-		// Bottom face
-		tex_quad(cube[1], cube[2], cube[3], cube[0], vnorm[0], vnorm[1], vnorm[2], vnorm[3]);
-	}
-
-	if (left == NO_TEXTURES)
-	{
-		glUseProgram(lightProg);
-		// Left face
-		rquad(cube[0], cube[3], cube[7], cube[4], vnorm[0], vnorm[3], vnorm[7], vnorm[4]);
-	}
-	else
-	{
-		glUseProgram(textureProg);
-		glBindTexture(GL_TEXTURE_2D, tex_ids[left]);
-		// Left face
-		tex_quad(cube[3], cube[7], cube[4], cube[0], vnorm[0], vnorm[3], vnorm[7], vnorm[4]);
-	}
-
-	if (right == NO_TEXTURES)
-	{
-		glUseProgram(lightProg);
-		// Right face
-		rquad(cube[1], cube[5], cube[6], cube[2], vnorm[1], vnorm[5], vnorm[6], vnorm[2]);
-	}
-	else
-	{
-		glUseProgram(textureProg);
-		glBindTexture(GL_TEXTURE_2D, tex_ids[right]);
-		// Right face
-		tex_quad(cube[1], cube[5], cube[6], cube[2], vnorm[1], vnorm[5], vnorm[6], vnorm[2]);
-	}
-
-	if (front == NO_TEXTURES)
-	{
-		glUseProgram(lightProg);
-		// Front face
-		rquad(cube[2], cube[6], cube[7], cube[3], vnorm[2], vnorm[6], vnorm[7], vnorm[3]);
-	}
-	else
-	{
-		glUseProgram(textureProg);
-		glBindTexture(GL_TEXTURE_2D, tex_ids[front]);
-		// Front face
-		tex_quad(cube[2], cube[6], cube[7], cube[3], vnorm[2], vnorm[6], vnorm[7], vnorm[3]);
-	}
-
-	if (back == NO_TEXTURES)
-	{
-		glUseProgram(lightProg);
-		// Back face
-		rquad(cube[0], cube[4], cube[5], cube[1], vnorm[0], vnorm[4], vnorm[5], vnorm[1]);
-	}
-	else
-	{
-		glUseProgram(textureProg);
-		glBindTexture(GL_TEXTURE_2D, tex_ids[back]);
-		// Back face
-		tex_quad(cube[0], cube[4], cube[5], cube[1], vnorm[0], vnorm[4], vnorm[5], vnorm[1]);
-	}
-}
-
-
-void texcube()
-{
-	// Top face
-	tex_quad(cube[4], cube[7], cube[6], cube[5], vnorm[4], vnorm[7], vnorm[6], vnorm[5]);
-
-	// Bottom face
-	tex_quad(cube[1], cube[2], cube[3], cube[0], vnorm[0], vnorm[1], vnorm[2], vnorm[3]);
-
-	// Left face
-	tex_quad(cube[3], cube[7], cube[4], cube[0], vnorm[0], vnorm[3], vnorm[7], vnorm[4]);
-
-	// Right face
-	tex_quad(cube[1], cube[5], cube[6], cube[2], vnorm[1], vnorm[5], vnorm[6], vnorm[2]);
-
-	// Front face
-	tex_quad(cube[2], cube[6], cube[7], cube[3], vnorm[2], vnorm[6], vnorm[7], vnorm[3]);
-
-	// Back face
-	tex_quad(cube[0], cube[4], cube[5], cube[1], vnorm[0], vnorm[4], vnorm[5], vnorm[1]);
-}
-
-
-void tex_quad(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat n1[], GLfloat n2[], GLfloat n3[], GLfloat n4[])
-{
-	GLfloat normal[3];
-
-	// Draw face 
-	glBegin(GL_POLYGON);
-	// Surface normal
-	if (normal_mode == SURFACE)
-	{
-		//Compute surface normal
-		cross(v1, v2, v4, normal);
-		normalize(normal);
-
-		glNormal3fv(normal);
-		glTexCoord2f(0, 0);
-		glVertex3fv(v1);
-		glTexCoord2f(1, 0);
-		glVertex3fv(v2);
-		glTexCoord2f(1, 1);
-		glVertex3fv(v3);
-		glTexCoord2f(0, 1);
-		glVertex3fv(v4);
-	}
-	// Vertex normal
-	else
-	{
-		//Set vertex normals
-		glNormal3fv(n1);
-		glTexCoord2f(0, 0);
-		glVertex3fv(v1);
-		glNormal3fv(n2);
-		glTexCoord2f(1, 0);
-		glVertex3fv(v2);
-		glNormal3fv(n3);
-		glTexCoord2f(1, 1);
-		glVertex3fv(v3);
-		glNormal3fv(n4);
-		glTexCoord2f(0, 1);
-		glVertex3fv(v4);
-	}
-	glEnd();
-}
-
-
-
-// Routine to draw cube
-void colorcube()
-{
-	// Top face
-	div_quad(cube[4], cube[7], cube[6], cube[5], vnorm[4], vnorm[7], vnorm[6], vnorm[5], div_level);
-
-	// Bottom face
-	div_quad(cube[0], cube[1], cube[2], cube[3], vnorm[0], vnorm[1], vnorm[2], vnorm[3], div_level);
-
-	// Left face
-	div_quad(cube[0], cube[3], cube[7], cube[4], vnorm[0], vnorm[3], vnorm[7], vnorm[4], div_level);
-
-	// Right face
-	div_quad(cube[1], cube[5], cube[6], cube[2], vnorm[1], vnorm[5], vnorm[6], vnorm[2], div_level);
-
-	// Front face
-	div_quad(cube[2], cube[6], cube[7], cube[3], vnorm[2], vnorm[6], vnorm[7], vnorm[3], div_level);
-
-	// Back face
-	div_quad(cube[0], cube[4], cube[5], cube[1], vnorm[0], vnorm[4], vnorm[5], vnorm[1], div_level);
-}
-
-// Routine to perform recursive subdivision
-void div_quad(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat n1[], GLfloat n2[], GLfloat n3[], GLfloat n4[], int n)
-{
-	GLfloat v1_prime[3], v2_prime[3], v3_prime[3], v4_prime[3], v5_prime[3];
-	GLfloat n1_prime[3], n2_prime[3], n3_prime[3], n4_prime[3], n5_prime[3];
-
-	// Recurse until n = 0
-	if (n > 0)
-	{
-		//Compute midpoints
-		for (int i = 0; i<3; i++)
-		{
-			v1_prime[i] = (v4[i] + v1[i]) / 2.0f;
-			v2_prime[i] = (v1[i] + v2[i]) / 2.0f;
-			v3_prime[i] = (v2[i] + v3[i]) / 2.0f;
-			v4_prime[i] = (v3[i] + v4[i]) / 2.0f;
-			v5_prime[i] = (v1[i] + v2[i] + v3[i] + v4[i]) / 4.0f;
-			n1_prime[i] = (n4[i] + n1[i]) / 2.0f;
-			n2_prime[i] = (n1[i] + n2[i]) / 2.0f;
-			n3_prime[i] = (n2[i] + n3[i]) / 2.0f;
-			n4_prime[i] = (n3[i] + n4[i]) / 2.0f;
-			n5_prime[i] = (n1[i] + n2[i] + n3[i] + n4[i]) / 4.0f;
-		}
-
-		//Subdivide polygon
-		div_quad(v1, v2_prime, v5_prime, v1_prime, n1, n2_prime, n5_prime, n1_prime, n - 1);
-		div_quad(v2_prime, v2, v3_prime, v5_prime, n2_prime, n2, n3_prime, n5_prime, n - 1);
-		div_quad(v1_prime, v5_prime, v4_prime, v4, n1_prime, n5_prime, n4_prime, n4, n - 1);
-		div_quad(v5_prime, v3_prime, v3, v4_prime, n5_prime, n3_prime, n3, n4_prime, n - 1);
-	}
-	else
-	{
-		//Otherwise render quad
-		rquad(v1, v2, v3, v4, n1, n2, n3, n4);
-	}
-}
-
-// Routine to draw quadrilateral face
-void rquad(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat n1[], GLfloat n2[], GLfloat n3[], GLfloat n4[])
-{
-	GLfloat normal[3];
-
-	// Draw face 
-	glBegin(GL_POLYGON);
-	// Surface normal
-	if (normal_mode == SURFACE)
-	{
-		//Compute surface normal
-		cross(v1, v2, v4, normal);
-		normalize(normal);
-
-		glNormal3fv(normal);
-		glVertex3fv(v1);
-		glVertex3fv(v2);
-		glVertex3fv(v3);
-		glVertex3fv(v4);
-	}
-	// Vertex normal
-	else
-	{
-		//Set vertex normals
-		glNormal3fv(n1);
-		glVertex3fv(v1);
-		glNormal3fv(n2);
-		glVertex3fv(v2);
-		glNormal3fv(n3);
-		glVertex3fv(v3);
-		glNormal3fv(n4);
-		glVertex3fv(v4);
-	}
-	glEnd();
-}
 
 
 ////////////////////////////////
@@ -1162,7 +980,7 @@ void bar_list()
 	glTranslatef(25.0f, 6.0f, -41.0f);
 	glPushMatrix();
 	glScalef(40.0f, 5.0f, 2.5f);
-	hybridcube(NO_TEXTURES, NO_TEXTURES, DARK_WOOD_STAIR, DARK_WOOD_STAIR, WALLPAPER_NARROW, DARK_WOOD_ROT);
+	hybridcube(NO_TEXTURES, NO_TEXTURES, DARK_WOOD_STAIR, DARK_WOOD_STAIR, LOWER_BAR, DARK_WOOD_ROT);
 	glPopMatrix();
 	glTranslatef(0.0f, 2.75f, 0.0f);
 	glScalef(42.0f, 0.5f, 4.0f);
@@ -1950,6 +1768,64 @@ void mid_first_floor_list()
 	glTranslatef(-44.75f, 1.25f, 0.0f);
 	glScalef(22.5f, 2.5f, 40.0f);
 	hybridcube(STAGE_WOOD, NO_TEXTURES, NO_TEXTURES, STAGE_WOOD_LONG_SIDES, NO_TEXTURES, NO_TEXTURES);
+	glPopMatrix();
+
+	//STAGE RAILINGS
+	glPushMatrix();
+	glTranslatef(-26.0f, 4.0f, 5.0f);
+	glScalef(15.0f, 0.2f, 0.2f);
+	hybridcube(STAGE_WOOD_PILLAR_ROT, STAGE_WOOD_PILLAR_ROT, NO_TEXTURES, NO_TEXTURES, STAGE_WOOD_PILLAR_ROT, STAGE_WOOD_PILLAR_ROT);
+	glPopMatrix();
+	//////////////
+	glPushMatrix();
+	glTranslatef(-26.0f, 4.0f, -5.0f);
+	glScalef(15.0f, 0.2f, 0.2f);
+	hybridcube(STAGE_WOOD_PILLAR_ROT, STAGE_WOOD_PILLAR_ROT, NO_TEXTURES, NO_TEXTURES, STAGE_WOOD_PILLAR_ROT, STAGE_WOOD_PILLAR_ROT);
+	glPopMatrix();
+	//////////////
+	glPushMatrix();
+	glTranslatef(-33.5f, 4.0f, -12.5f);
+	glScalef(0.2f, 0.2f, 15.0f);
+	hybridcube(STAGE_WOOD_PILLAR, STAGE_WOOD_PILLAR, STAGE_WOOD_PILLAR, STAGE_WOOD_PILLAR, NO_TEXTURES, NO_TEXTURES);
+	glPopMatrix();
+	/////////////
+	glPushMatrix();
+	glTranslatef(-33.5f, 4.0f, 12.5f);
+	glScalef(0.2f, 0.2f, 15.0f);
+	hybridcube(STAGE_WOOD_PILLAR, STAGE_WOOD_PILLAR, STAGE_WOOD_PILLAR, STAGE_WOOD_PILLAR, NO_TEXTURES, NO_TEXTURES);
+	glPopMatrix();
+	/////////////
+	glPushMatrix();
+	glUseProgram(textureProg);
+	glBindTexture(GL_TEXTURE_2D, tex_ids[STAGE_WOOD_PLANK]);
+	glTranslatef(-33.5f, 3.0f, 20.0f);
+	for (int i = -3; i <= 3; i++)
+	{
+		if (i == 0)
+		{
+			glPushMatrix();
+			glScalef(0.2f, 2.0f, 0.2f);
+			texcube();
+			glPopMatrix();
+			glTranslatef(0.0f, 0.0f, -10.0f);
+		}
+		else
+		{
+			glPushMatrix();
+			glScalef(0.2f, 2.0f, 0.2f);
+			texcube();
+			glPopMatrix();
+			glTranslatef(0.0f, 0.0f, -5.0f);
+		}
+	}
+	glPushMatrix();
+	glScalef(0.2f, 2.0f, 0.2f);
+	texcube();
+	glPopMatrix();
+	glPopMatrix();
+	/////////////
+	glPushMatrix();
+	//STAGE WALKWAY RAILINGS
 	glPopMatrix();
 
 
@@ -2781,6 +2657,7 @@ void table_list()
 
 	//LANTERN
 	glPushMatrix();
+	set_material(GL_FRONT, &yellow_rubber);
 	glTranslatef(0.2f, 3.25f, -0.5f);
 	glRotatef(30, 0, 1, 0);
 	glScalef(0.5f, 1.0f, 0.5f);
@@ -2866,19 +2743,19 @@ void table_list()
 	glPopMatrix();
 
 	//SPHERICAL FRUIT
-	set_material(GL_FRONT, &yellow_rubber);
+	glUseProgram(textureProg);
+	glBindTexture(GL_TEXTURE_2D, tex_ids[ORANGE]);
 	glPushMatrix();
-	GLUquadricObj *fruit = gluNewQuadric();
 	glTranslatef(-0.375f, 2.85f, 0.0f);
-	gluSphere(bowl, 0.11f, 10, 10);
+	gluSphere(quadric, 0.11f, 10, 10);
 	glTranslatef(0.175f, 0.075f, 0.0f);
-	gluSphere(bowl, 0.11, 10, 10);
+	gluSphere(quadric, 0.11, 10, 10);
 	glTranslatef(-0.35f, 0.0f, 0.0f);
-	gluSphere(bowl, 0.11, 10, 10);
+	gluSphere(quadric, 0.11, 10, 10);
 	glTranslatef(0.175f, 0.0f, 0.175f);
-	gluSphere(bowl, 0.13, 10, 10);
+	gluSphere(quadric, 0.13, 10, 10);
 	glTranslatef(0.0f, 0.0f, -0.375f);
-	gluSphere(bowl, 0.12, 10, 10);
+	gluSphere(quadric, 0.12, 10, 10);
 	glPopMatrix();
 
 	//NEG X CHAIR
@@ -4082,4 +3959,260 @@ void bar_chair_list()
 
 	glPopAttrib();
 	glEndList();
+}
+
+
+//Function to render a cube with a choice of
+//texture based or material based faces 
+//(independently). Specify your choice for 
+//each side by inputting the texture ID of
+//your desired texture for that face, or 
+//by entering NO_TEXTURES to use materials
+//instead
+void hybridcube(int top, int bottom, int left, int right, int front, int back)
+{
+	if (top == NO_TEXTURES)
+	{
+		glUseProgram(lightProg);
+		// Top face
+		rquad(cube[4], cube[7], cube[6], cube[5], vnorm[4], vnorm[7], vnorm[6], vnorm[5]);
+	}
+	else
+	{
+		glUseProgram(textureProg);
+		glBindTexture(GL_TEXTURE_2D, tex_ids[top]);
+		// Top face
+		tex_quad(cube[4], cube[7], cube[6], cube[5], vnorm[4], vnorm[7], vnorm[6], vnorm[5]);
+	}
+
+	if (bottom == NO_TEXTURES)
+	{
+		glUseProgram(lightProg);
+		// Bottom face
+		rquad(cube[1], cube[2], cube[3], cube[0], vnorm[0], vnorm[1], vnorm[2], vnorm[3]);
+	}
+	else
+	{
+		glUseProgram(textureProg);
+		glBindTexture(GL_TEXTURE_2D, tex_ids[bottom]);
+		// Bottom face
+		tex_quad(cube[1], cube[2], cube[3], cube[0], vnorm[0], vnorm[1], vnorm[2], vnorm[3]);
+	}
+
+	if (left == NO_TEXTURES)
+	{
+		glUseProgram(lightProg);
+		// Left face
+		rquad(cube[0], cube[3], cube[7], cube[4], vnorm[0], vnorm[3], vnorm[7], vnorm[4]);
+	}
+	else
+	{
+		glUseProgram(textureProg);
+		glBindTexture(GL_TEXTURE_2D, tex_ids[left]);
+		// Left face
+		tex_quad(cube[3], cube[7], cube[4], cube[0], vnorm[0], vnorm[3], vnorm[7], vnorm[4]);
+	}
+
+	if (right == NO_TEXTURES)
+	{
+		glUseProgram(lightProg);
+		// Right face
+		rquad(cube[1], cube[5], cube[6], cube[2], vnorm[1], vnorm[5], vnorm[6], vnorm[2]);
+	}
+	else
+	{
+		glUseProgram(textureProg);
+		glBindTexture(GL_TEXTURE_2D, tex_ids[right]);
+		// Right face
+		tex_quad(cube[1], cube[5], cube[6], cube[2], vnorm[1], vnorm[5], vnorm[6], vnorm[2]);
+	}
+
+	if (front == NO_TEXTURES)
+	{
+		glUseProgram(lightProg);
+		// Front face
+		rquad(cube[2], cube[6], cube[7], cube[3], vnorm[2], vnorm[6], vnorm[7], vnorm[3]);
+	}
+	else
+	{
+		glUseProgram(textureProg);
+		glBindTexture(GL_TEXTURE_2D, tex_ids[front]);
+		// Front face
+		tex_quad(cube[2], cube[6], cube[7], cube[3], vnorm[2], vnorm[6], vnorm[7], vnorm[3]);
+	}
+
+	if (back == NO_TEXTURES)
+	{
+		glUseProgram(lightProg);
+		// Back face
+		rquad(cube[0], cube[4], cube[5], cube[1], vnorm[0], vnorm[4], vnorm[5], vnorm[1]);
+	}
+	else
+	{
+		glUseProgram(textureProg);
+		glBindTexture(GL_TEXTURE_2D, tex_ids[back]);
+		// Back face
+		tex_quad(cube[0], cube[4], cube[5], cube[1], vnorm[0], vnorm[4], vnorm[5], vnorm[1]);
+	}
+}
+
+//Function to create a textured cube
+void texcube()
+{
+	// Top face
+	tex_quad(cube[4], cube[7], cube[6], cube[5], vnorm[4], vnorm[7], vnorm[6], vnorm[5]);
+
+	// Bottom face
+	tex_quad(cube[1], cube[2], cube[3], cube[0], vnorm[0], vnorm[1], vnorm[2], vnorm[3]);
+
+	// Left face
+	tex_quad(cube[3], cube[7], cube[4], cube[0], vnorm[0], vnorm[3], vnorm[7], vnorm[4]);
+
+	// Right face
+	tex_quad(cube[1], cube[5], cube[6], cube[2], vnorm[1], vnorm[5], vnorm[6], vnorm[2]);
+
+	// Front face
+	tex_quad(cube[2], cube[6], cube[7], cube[3], vnorm[2], vnorm[6], vnorm[7], vnorm[3]);
+
+	// Back face
+	tex_quad(cube[0], cube[4], cube[5], cube[1], vnorm[0], vnorm[4], vnorm[5], vnorm[1]);
+}
+
+//Function to create a textured quad
+void tex_quad(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat n1[], GLfloat n2[], GLfloat n3[], GLfloat n4[])
+{
+	GLfloat normal[3];
+
+	// Draw face 
+	glBegin(GL_POLYGON);
+	// Surface normal
+	if (normal_mode == SURFACE)
+	{
+		//Compute surface normal
+		cross(v1, v2, v4, normal);
+		normalize(normal);
+
+		glNormal3fv(normal);
+		glTexCoord2f(0, 0);
+		glVertex3fv(v1);
+		glTexCoord2f(1, 0);
+		glVertex3fv(v2);
+		glTexCoord2f(1, 1);
+		glVertex3fv(v3);
+		glTexCoord2f(0, 1);
+		glVertex3fv(v4);
+	}
+	// Vertex normal
+	else
+	{
+		//Set vertex normals
+		glNormal3fv(n1);
+		glTexCoord2f(0, 0);
+		glVertex3fv(v1);
+		glNormal3fv(n2);
+		glTexCoord2f(1, 0);
+		glVertex3fv(v2);
+		glNormal3fv(n3);
+		glTexCoord2f(1, 1);
+		glVertex3fv(v3);
+		glNormal3fv(n4);
+		glTexCoord2f(0, 1);
+		glVertex3fv(v4);
+	}
+	glEnd();
+}
+
+// Routine to draw cube
+void colorcube()
+{
+	// Top face
+	div_quad(cube[4], cube[7], cube[6], cube[5], vnorm[4], vnorm[7], vnorm[6], vnorm[5], div_level);
+
+	// Bottom face
+	div_quad(cube[0], cube[1], cube[2], cube[3], vnorm[0], vnorm[1], vnorm[2], vnorm[3], div_level);
+
+	// Left face
+	div_quad(cube[0], cube[3], cube[7], cube[4], vnorm[0], vnorm[3], vnorm[7], vnorm[4], div_level);
+
+	// Right face
+	div_quad(cube[1], cube[5], cube[6], cube[2], vnorm[1], vnorm[5], vnorm[6], vnorm[2], div_level);
+
+	// Front face
+	div_quad(cube[2], cube[6], cube[7], cube[3], vnorm[2], vnorm[6], vnorm[7], vnorm[3], div_level);
+
+	// Back face
+	div_quad(cube[0], cube[4], cube[5], cube[1], vnorm[0], vnorm[4], vnorm[5], vnorm[1], div_level);
+}
+
+// Routine to perform recursive subdivision
+void div_quad(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat n1[], GLfloat n2[], GLfloat n3[], GLfloat n4[], int n)
+{
+	GLfloat v1_prime[3], v2_prime[3], v3_prime[3], v4_prime[3], v5_prime[3];
+	GLfloat n1_prime[3], n2_prime[3], n3_prime[3], n4_prime[3], n5_prime[3];
+
+	// Recurse until n = 0
+	if (n > 0)
+	{
+		//Compute midpoints
+		for (int i = 0; i<3; i++)
+		{
+			v1_prime[i] = (v4[i] + v1[i]) / 2.0f;
+			v2_prime[i] = (v1[i] + v2[i]) / 2.0f;
+			v3_prime[i] = (v2[i] + v3[i]) / 2.0f;
+			v4_prime[i] = (v3[i] + v4[i]) / 2.0f;
+			v5_prime[i] = (v1[i] + v2[i] + v3[i] + v4[i]) / 4.0f;
+			n1_prime[i] = (n4[i] + n1[i]) / 2.0f;
+			n2_prime[i] = (n1[i] + n2[i]) / 2.0f;
+			n3_prime[i] = (n2[i] + n3[i]) / 2.0f;
+			n4_prime[i] = (n3[i] + n4[i]) / 2.0f;
+			n5_prime[i] = (n1[i] + n2[i] + n3[i] + n4[i]) / 4.0f;
+		}
+
+		//Subdivide polygon
+		div_quad(v1, v2_prime, v5_prime, v1_prime, n1, n2_prime, n5_prime, n1_prime, n - 1);
+		div_quad(v2_prime, v2, v3_prime, v5_prime, n2_prime, n2, n3_prime, n5_prime, n - 1);
+		div_quad(v1_prime, v5_prime, v4_prime, v4, n1_prime, n5_prime, n4_prime, n4, n - 1);
+		div_quad(v5_prime, v3_prime, v3, v4_prime, n5_prime, n3_prime, n3, n4_prime, n - 1);
+	}
+	else
+	{
+		//Otherwise render quad
+		rquad(v1, v2, v3, v4, n1, n2, n3, n4);
+	}
+}
+
+// Routine to draw quadrilateral face
+void rquad(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat n1[], GLfloat n2[], GLfloat n3[], GLfloat n4[])
+{
+	GLfloat normal[3];
+
+	// Draw face 
+	glBegin(GL_POLYGON);
+	// Surface normal
+	if (normal_mode == SURFACE)
+	{
+		//Compute surface normal
+		cross(v1, v2, v4, normal);
+		normalize(normal);
+
+		glNormal3fv(normal);
+		glVertex3fv(v1);
+		glVertex3fv(v2);
+		glVertex3fv(v3);
+		glVertex3fv(v4);
+	}
+	// Vertex normal
+	else
+	{
+		//Set vertex normals
+		glNormal3fv(n1);
+		glVertex3fv(v1);
+		glNormal3fv(n2);
+		glVertex3fv(v2);
+		glNormal3fv(n3);
+		glVertex3fv(v3);
+		glNormal3fv(n4);
+		glVertex3fv(v4);
+	}
+	glEnd();
 }

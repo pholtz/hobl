@@ -99,21 +99,16 @@
     <Image Include="dlid.jpg" />
     <Image Include="drp.jpg" />
     <Image Include="dwood.jpg" />
-    <Image Include="et.bmp" />
     <Image Include="fltile.jpg" />
     <Image Include="jwart.jpg" />
-    <Image Include="mn.bmp" />
-    <Image Include="space.jpg" />
     <Image Include="stagewd.jpg" />
     <Image Include="stagewdrot.jpg" />
     <Image Include="tile.png" />
     <Image Include="wallpaper.jpg" />
     <Image Include="wallpaper2.jpg" />
     <Image Include="wallpaperrot.jpg" />
-    <Image Include="wdflr.jpg" />
     <Image Include="wdgen.jpg" />
     <Image Include="wdgenleg.jpg" />
-    <Image Include="window.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

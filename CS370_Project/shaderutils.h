@@ -101,7 +101,7 @@ void printOGLShaderLog(GLuint shader)
 	glGetShaderInfoLog(shader,log_length,&log_length,log);
 
 	printf("%s\n",log);
-	delete log;
+	delete[] log;
 }
 
 // Courtesy of Andy Eyster
@@ -120,7 +120,7 @@ void printOGLProgramLog(GLuint program)
 	glGetProgramInfoLog(program,log_length,&log_length,log);
 
 	printf("%s\n",log);
-	delete log;
+	delete[] log;
 }
 
 // Routine to load and compile shaders

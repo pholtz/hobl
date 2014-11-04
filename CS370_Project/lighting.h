@@ -13,6 +13,11 @@ LightType white_light = {{0.1f,0.1f,0.1f,1.0f},
 LightType blue_light = { { 0.0f, 0.0f, 0.1f, 1.0f },
 { 0.0f, 0.0f, 1.0f, 1.0f },
 { 0.0f, 0.0f, 1.0f, 1.0f } };
+
+// Lighting properties for no light
+LightType black_light = { { 0.0f, 0.0f, 0.0f, 1.0f },
+{ 0.0f, 0.0f, 0.0f, 1.0f },
+{ 0.0f, 0.0f, 0.0f, 1.0f } };
 					   
 // Utility function to set directional light properties
 void set_DirectionalLight(GLenum source, LightType *light, GLfloat direction[4])
