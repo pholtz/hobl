@@ -14,6 +14,9 @@ f -> toggle fan(s) on/off
 Enjoy!
 
 Unfinished Business:
+-Shoji blinds for bar windows
+-Mirror on z-pos side
+-Second story lights
 -Entrance Railing Lattice
 -Stage Railings
 -Texture ceiling with genwood texture
@@ -195,7 +198,7 @@ GLfloat vnorm[][3] = { { -0.5f, -0.5f, -0.5f }, { 0.5f, -0.5f, -0.5f }, { 0.5f, 
 
 // Global subdivision parameters
 int div_level = 0;
-int normal_mode = SURFACE;
+int normal_mode = VERTEX;
 
 //camera global variables
 GLfloat eye[3] = { 0.0f, 5.0f, 5.0f };
@@ -218,12 +221,12 @@ GLfloat light0_pos[4] = { 50.0f, 30.0f, 45.0f, 1.0f };
 GLfloat light1_pos[4] = { -50.0f, 30.0f, 45.0f, 1.0f };
 GLfloat light2_pos[4] = { -50.0f, 30.0f, -45.0f, 1.0f };
 GLfloat light3_pos[4] = { 50.0f, 30.0f, -45.0f, 1.0f };
-GLfloat light4_pos[4] = { 35.0f, 5.0f, -35.0f, 1.0f };
-GLfloat light0_attenuation[3] = {3.0f, 0.0f, 0.0f};
-GLfloat light1_attenuation[3] = {3.0f, 0.0f, 0.0f};
-GLfloat light2_attenuation[3] = {3.0f, 0.0f, 0.0f };
-GLfloat light3_attenuation[3] = {3.0f, 0.0f, 0.0f };
-GLfloat light4_attenuation[3] = { 3.0f, 0.0f, 0.0f };
+GLfloat light4_pos[4] = { 10.0f, 20.0f, 0.0f, 1.0f };
+GLfloat light0_attenuation[3] = {2.5f, 0.0f, 0.0f};
+GLfloat light1_attenuation[3] = {2.5f, 0.0f, 0.0f};
+GLfloat light2_attenuation[3] = {2.5f, 0.0f, 0.0f };
+GLfloat light3_attenuation[3] = {2.5f, 0.0f, 0.0f };
+GLfloat light4_attenuation[3] = { 2.5f, 0.0f, 0.0f };
 GLfloat ambient_color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat light_off[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 //lighting controls
@@ -772,12 +775,11 @@ void render_lights()
 
 	if (light4_toggle)
 	{
-		//blue bar light
-		set_AmbientLight(ambient_color);
+		set_PointLightAttenuated(GL_LIGHT4, &white_light, light4_pos, light4_attenuation);
 	}
 	else
 	{
-		set_AmbientLight(light_off);
+		set_PointLightAttenuated(GL_LIGHT4, &black_light, light4_pos, light4_attenuation);
 	}
 }
 
@@ -1260,7 +1262,7 @@ void balcony_list()
 	glPushMatrix();
 	glTranslatef(17.5f, SECOND_FLOOR + 1.0f, -35.0f);
 	glScalef(115.0f, 2.0f, 0.25f);
-	hybridcube(DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, NO_TEXTURES, NO_TEXTURES, DARK_WOOD_STAIR_ROT, DARK_WOOD_STAIR_ROT);
+	hybridcube(DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_SMALL, DARK_WOOD_SMALL, DARK_WOOD_PILLAR_ROT, DARK_WOOD_PILLAR_ROT);
 	glPopMatrix();
 	//Z NEG RAILING HORIZONTAL
 	glPushMatrix();
@@ -1290,7 +1292,7 @@ void balcony_list()
 		glTranslatef(2.0f, 0.15f, 0.0f);
 		glPushMatrix();
 		glScalef(0.25f, 2.25f, 0.25f);
-		hybridcube(NO_TEXTURES, NO_TEXTURES, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR);
+		hybridcube(DARK_WOOD_SMALL, DARK_WOOD_SMALL, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR);
 		glPopMatrix();
 
 		//create the boxed railing art
@@ -1327,7 +1329,7 @@ void balcony_list()
 	glPushMatrix();
 	glTranslatef(17.5f, SECOND_FLOOR + 1.0f, 35.0f);
 	glScalef(115.0f, 2.0f, 0.25f);
-	hybridcube(DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, NO_TEXTURES, NO_TEXTURES, DARK_WOOD_STAIR_ROT, DARK_WOOD_STAIR_ROT);
+	hybridcube(DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_SMALL, DARK_WOOD_SMALL, DARK_WOOD_PILLAR_ROT, DARK_WOOD_PILLAR_ROT);
 	glPopMatrix();
 	//Z POS SIDING-FLOOR BUFFER
 	glPushMatrix();
@@ -1362,7 +1364,7 @@ void balcony_list()
 		glTranslatef(2.0f, 0.15f, 0.0f);
 		glPushMatrix();
 		glScalef(0.25f, 2.25f, 0.25f);
-		hybridcube(NO_TEXTURES, NO_TEXTURES, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR);
+		hybridcube(DARK_WOOD_SMALL, DARK_WOOD_SMALL, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR);
 		glPopMatrix();
 
 		//create the boxed railing art
@@ -1400,7 +1402,7 @@ void balcony_list()
 	glPushMatrix();
 	glTranslatef(-40.0f, SECOND_FLOOR + 1.0f, 0.0f);
 	glScalef(0.25f, 2.0f, 45.0f);
-	hybridcube(DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_STAIR_ROT, DARK_WOOD_STAIR_ROT, NO_TEXTURES, NO_TEXTURES);
+	hybridcube(DARK_WOOD_PILLAR, DARK_WOOD_PILLAR, DARK_WOOD_PILLAR_ROT, DARK_WOOD_PILLAR_ROT, DARK_WOOD_SMALL, DARK_WOOD_SMALL);
 	glPopMatrix();
 	//BALCONY RAILING HORIZONTAL
 	glPushMatrix();
@@ -2439,6 +2441,14 @@ void entrance_list()
 	glScalef(23.0f, 0.5f, 0.5f);
 	texcube();
 	glPopMatrix();
+	//////////// central support beam
+	glTranslatef(0.0f, 3.5f, -5.0f);
+	glPushMatrix();
+	glRotatef(45.0f, 1, 0, 0);
+	glScalef(24.0f, 0.5f, 0.5f);
+	texcube();
+	glPopMatrix();
+	glTranslatef(0.0f, -3.5f, 5.0f);
 	//support beam 2
 	glTranslatef(0.0f, 0.0f, -10.0f);
 	glPushMatrix();
@@ -2451,11 +2461,11 @@ void entrance_list()
 	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, tex_ids[TILE]);
 	glBegin(GL_QUADS);
-	glTexCoord3f(0.0f, 0.0f, -6.0f);
-	glVertex3f(0.0f, 0.0f, -6.0f);
-	glTexCoord3f(25.0f, 0.0f, -6.0f);
-	glVertex3f(25.0f, 0.0f, -6.0f);
-	glTexCoord3f(25.0f, 4.0f, 0.0f);
+	glTexCoord3f(0.0f, -1.0f, -5.0f);
+	glVertex3f(0.0f, -1.0f, -7.5f);
+	glTexCoord3f(20.0f, -1.0f, -5.0f);
+	glVertex3f(25.0f, -1.0f, -7.5f);
+	glTexCoord3f(20.0f, 4.0f, 0.0f);
 	glVertex3f(25.0f, 4.0f, 0.0f);
 	glTexCoord3f(0.0f, 4.0f, 0.0f);
 	glVertex3f(0.0f, 4.0f, 0.0f);
@@ -2463,20 +2473,47 @@ void entrance_list()
 	glBegin(GL_QUADS);
 	glTexCoord3f(0.0f, 4.0f, 0.0f);
 	glVertex3f(0.0f, 4.0f, 0.0f);
-	glTexCoord3f(25.0f, 4.0f, 0.0f);
+	glTexCoord3f(20.0f, 4.0f, 0.0f);
 	glVertex3f(25.0f, 4.0f, 0.0f);
-	glTexCoord3f(25.0f, 0.0f, 6.0f);
-	glVertex3f(25.0f, 0.0f, 6.0f);
-	glTexCoord3f(0.0f, 0.0f, 6.0f);
-	glVertex3f(0.0f, 0.0f, 6.0f);
+	glTexCoord3f(20.0f, -1.0f, 5.0f);
+	glVertex3f(25.0f, -1.0f, 7.5f);
+	glTexCoord3f(0.0f, -1.0f, 5.0f);
+	glVertex3f(0.0f, -1.0f, 7.5f);
 	glEnd();
 	glPopMatrix();
-	glUseProgram(lightProg);
+
+	glTranslatef(1.0f, 1.1f, -3.75f);
+	glPushMatrix();
+	glRotatef(-33.5f, 1, 0, 0);
+	glScalef(0.5f, 0.5f, 9.0f);
+	hybridcube(WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR_ROT, WOOD_PILLAR_ROT, WOOD_SMALL, WOOD_SMALL);
+	glPopMatrix();
+	//////////////
+	glTranslatef(0.0f, 0.0f, 7.5f);
+	glPushMatrix();
+	glRotatef(33.5f, 1, 0, 0);
+	glScalef(0.5f, 0.5f, 9.0f);
+	hybridcube(WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR_ROT, WOOD_PILLAR_ROT, WOOD_SMALL, WOOD_SMALL);
+	glPopMatrix();
+	/////////////
+	glTranslatef(23.5f, 0.0f, 0.0f);
+	glPushMatrix();
+	glRotatef(33.5f, 1, 0, 0);
+	glScalef(0.5f, 0.5f, 9.0f);
+	hybridcube(WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR_ROT, WOOD_PILLAR_ROT, WOOD_SMALL, WOOD_SMALL);
+	glPopMatrix();
+	////////////
+	glTranslatef(0.0f, 0.0f, -7.5f);
+	glPushMatrix();
+	glRotatef(-33.5f, 1, 0, 0);
+	glScalef(0.5f, 0.5f, 9.0f);
+	hybridcube(WOOD_PILLAR, WOOD_PILLAR, WOOD_PILLAR_ROT, WOOD_PILLAR_ROT, WOOD_SMALL, WOOD_SMALL);
+	glPopMatrix();
+
 
 	glPopMatrix();	//master pop
 
 	//PILLARS -- Z NEG
-	glUseProgram(textureProg);
 	glBindTexture(GL_TEXTURE_2D, tex_ids[DARK_WOOD_PILLAR]);
 	glPushMatrix();	//master push
 	glTranslatef(65.25f, 22.0f, -15.25f);
@@ -2915,11 +2952,16 @@ void roof_list()
 
 	//ROOF
 	glPushMatrix();
-
+	//glUseProgram(textureProg);
+	//glBindTexture(GL_TEXTURE_2D, tex_ids[TABLE_WOOD]);
 	glBegin(GL_QUADS);
+	//glTexCoord2f(0, 0);
 	glVertex3f(HOUSE_X, HOUSE_Y, HOUSE_Z);
+	//glTexCoord2f(0, 20);
 	glVertex3f(HOUSE_X, HOUSE_Y, -HOUSE_Z);
+	//glTexCoord2f(30, 20);
 	glVertex3f(-HOUSE_X, HOUSE_Y, -HOUSE_Z);
+	//glTexCoord2f(30, 0);
 	glVertex3f(-HOUSE_X, HOUSE_Y, HOUSE_Z);
 	glEnd();
 	glPopMatrix();
@@ -3170,7 +3212,12 @@ void draw_fan()
 	glPopMatrix();
 	glPopMatrix();
 
-
+	// fan support
+	glPushMatrix();
+	glTranslatef(0.0f, 14.0f, 0.0f);
+	glRotatef(-90, 1, 0, 0);
+	gluCylinder(quadric, 0.15f, 0.15f, 0.75f, 20, 20);
+	glPopMatrix();
 
 	//fan light
 	if (light_toggle_flag)
