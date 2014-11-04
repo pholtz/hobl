@@ -50,6 +50,12 @@
     <None Include="texturevert.vs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="modfrag.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="modvert.vs">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="house.cpp">

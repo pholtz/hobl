@@ -14,8 +14,7 @@
 #define WALL_Y_UPPER				40.0f
 #define WALL_Y_LOWER				0.0f
 
-//CEILING CONSTANTS
-#define MID_CEILING			50.0f
+
 
 #define WALKSPD				300.0f
 #define FLY					//comment this out to remove flying and add boundary clipping

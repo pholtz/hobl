@@ -89,6 +89,8 @@
     <None Include="defaultvert.vs" />
     <None Include="lightfrag.fs" />
     <None Include="lightvert.vs" />
+    <None Include="modfrag.fs" />
+    <None Include="modvert.vs" />
     <None Include="texturefrag.fs" />
     <None Include="texturevert.vs" />
   </ItemGroup>

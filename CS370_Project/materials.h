@@ -87,6 +87,13 @@ MaterialType red_rubber = {
 	{ 0.7f, 0.04f, 0.04f, 1.0f },
 	10.0f
 };
+
+MaterialType clear = {
+	{ 1.0f, 1.0f, 1.0f, 1.0f },
+	{ 0.1f, 0.1f, 0.1f, 1.0f },
+	{ 0.1f, 0.1f, 0.1f, 1.0f },
+	5.0f
+};
 						
 void set_material(GLenum face, MaterialType *material)
 {
