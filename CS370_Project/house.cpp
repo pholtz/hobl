@@ -160,18 +160,15 @@ char texture_files[NO_TEXTURES][20] = {"tb.jpg", "drp.jpg", "dlid.jpg", "tile.pn
 #define FLOOR 3
 #define WALLS 4
 #define DOOR 5
-#define WINDOW 6
-#define ART 7
-#define MIRROR 8
-#define ROOF 9
-#define ENTRANCE 10
-#define STAIRS 11
-#define MID_FIRST_FLOOR 12
-#define BALCONY 13
-#define CHAIR 14
-#define BAR 15
-#define FIRST_FLOOR_REAR 16
-#define BAR_CHAIR 17
+#define ROOF 6
+#define ENTRANCE 7
+#define STAIRS 8
+#define MID_FIRST_FLOOR 9
+#define BALCONY 10
+#define CHAIR 11
+#define BAR 12
+#define FIRST_FLOOR_REAR 13
+#define BAR_CHAIR 14
 
 // View modes
 #define ORTHOGRAPHIC 0
@@ -272,9 +269,6 @@ void table_list();
 void floor_list();
 void wall_list();
 void door_list();
-void window_list();
-void art_list();
-void mirror_list();
 void roof_list();
 void entrance_list();
 void stair_list();
@@ -841,9 +835,6 @@ void render_display_lists()
 	floor_list();
 	wall_list();
 	door_list();
-	window_list();
-	art_list();
-	mirror_list();
 	roof_list();
 	entrance_list();
 	stair_list();
@@ -2931,16 +2922,18 @@ void roof_list()
 
 	//ROOF
 	glPushMatrix();
-	////glUseProgram(textureProg);
-	//glBindTexture(GL_TEXTURE_2D, tex_ids[TABLE_WOOD]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 0);
+	glNormal3fv(vnorm[0]);
 	glVertex3f(HOUSE_X, HOUSE_Y, HOUSE_Z);
 	glTexCoord2f(0, 20);
+	glNormal3fv(vnorm[1]);
 	glVertex3f(HOUSE_X, HOUSE_Y, -HOUSE_Z);
 	glTexCoord2f(30, 20);
+	glNormal3fv(vnorm[2]);
 	glVertex3f(-HOUSE_X, HOUSE_Y, -HOUSE_Z);
 	glTexCoord2f(30, 0);
+	glNormal3fv(vnorm[3]);
 	glVertex3f(-HOUSE_X, HOUSE_Y, HOUSE_Z);
 	glEnd();
 	glPopMatrix();
@@ -2953,7 +2946,6 @@ void roof_list()
 		glPushMatrix();
 			glScalef(150.0f, 0.5f, 0.5f);
 			texcube();
-			//colorcube();
 		glPopMatrix();
 		glTranslatef(0.0f, 0.0f, -5.0f);
 	}
@@ -2966,7 +2958,6 @@ void roof_list()
 		glPushMatrix();
 			glScalef(0.5f, 0.5f, 100.0f);
 			texcube();
-			//colorcube();
 		glPopMatrix();
 		glTranslatef(-5.0f, 0.0f, 0.0f);
 	}
@@ -2998,6 +2989,7 @@ void draw_chandelier()
 {
 	//CHANDELIER
 	//glUseProgram(textureProg);
+	set_material(GL_FRONT_AND_BACK, &clear);
 	glBindTexture(GL_TEXTURE_2D, tex_ids[CHAND_PAPER]);
 	glPushMatrix();
 	glTranslatef(0.0f, 10.0f, 0.0f);
@@ -3797,54 +3789,6 @@ void door_list()
 	glutSolidSphere(0.15f, 20, 20);
 	glPopMatrix();
 
-
-	glPopAttrib();
-	glEndList();
-}
-
-
-void window_list()
-{
-	glNewList(WINDOW, GL_COMPILE);
-	glPushAttrib(GL_CURRENT_BIT);
-
-	glPushMatrix();
-		glTranslatef(0.0f, 6.0f, 10.0f);
-		glScalef(10.0f, 5.0f, 0.3f);
-		colorcube();
-	glPopMatrix();
-
-	glPopAttrib();
-	glEndList();
-}
-
-
-void art_list()
-{
-	glNewList(ART, GL_COMPILE);
-	glPushAttrib(GL_CURRENT_BIT);
-
-	glPushMatrix();
-		glTranslatef(-10.0f, 5.0f, 0.0f);
-		glScalef(0.3f, 7.5f, 5.0f);
-		colorcube();
-	glPopMatrix();
-
-	glPopAttrib();
-	glEndList();
-}
-
-
-void mirror_list()
-{
-	glNewList(MIRROR, GL_COMPILE);
-	glPushAttrib(GL_CURRENT_BIT);
-
-	glPushMatrix();
-	glTranslatef(0.0f, 5.0f, -10.0f);
-	glScalef(2.0f, 2.0f, 0.3f);
-	colorcube();
-	glPopMatrix();
 
 	glPopAttrib();
 	glEndList();

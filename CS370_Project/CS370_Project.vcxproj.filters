@@ -32,24 +32,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="defaultfrag.fs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="defaultvert.vs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="lightfrag.fs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="lightvert.vs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="texturefrag.fs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="texturevert.vs">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="modfrag.fs">
       <Filter>Resource Files</Filter>
     </None>

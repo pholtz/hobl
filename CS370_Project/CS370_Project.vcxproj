@@ -85,14 +85,8 @@
     <ClInclude Include="vectorops.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="defaultfrag.fs" />
-    <None Include="defaultvert.vs" />
-    <None Include="lightfrag.fs" />
-    <None Include="lightvert.vs" />
     <None Include="modfrag.fs" />
     <None Include="modvert.vs" />
-    <None Include="texturefrag.fs" />
-    <None Include="texturevert.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="house.cpp" />
