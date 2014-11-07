@@ -14,8 +14,8 @@ MaterialType brass = {  { 0.33f, 0.22f, 0.03f, 1.0f },
 // Material properties for glass
 MaterialType glass = { 
 	{ 0.0f, 0.0f, 0.0f, 0.15f }, 
-	{ 0.55f, 0.55f, 0.55f, 0.15f }, 
-	{ 0.70f, 0.70f, 0.70f, 0.15f },
+	{ 0.65f, 0.65f, 0.65f, 0.15f }, 
+	{ 0.75f, 0.75f, 0.75f, 0.15f },
 	100.0f
 };
 
@@ -63,7 +63,7 @@ MaterialType faux_wood = {
 	{ 0.24f, 0.14f, 0.07f, 1.0f },
 	{ 0.28f, 0.16f, 0.1f, 1.0f },
 	{ 0.47f, 0.29f, 0.0f, 1.0f },
-	7.0f
+	10.0f
 };
 
 //Created using Mated
@@ -71,7 +71,15 @@ MaterialType light_wood = {
 	{ 0.44f, 0.34f, 0.2f, 1.0f },
 	{ 0.48f, 0.36f, 0.25f, 1.0f },
 	{ 0.67f, 0.49f, 0.0f, 1.0f },
-	7.0f
+	10.0f
+};
+
+//Created using Mated
+MaterialType dark_wood = {
+	{ 0.14f, 0.04f, 0.07f, 1.0f },
+	{ 0.18f, 0.06f, 0.1f, 1.0f },
+	{ 0.37f, 0.19f, 0.0f, 1.0f },
+	10.0f
 };
 
 MaterialType black_plastic = {
@@ -92,7 +100,14 @@ MaterialType clear = {
 	{ 1.0f, 1.0f, 1.0f, 1.0f },
 	{ 0.1f, 0.1f, 0.1f, 1.0f },
 	{ 0.1f, 0.1f, 0.1f, 1.0f },
-	5.0f
+	20.0f
+};
+
+MaterialType white = {
+	{ 0.5f, 0.5f, 0.5f, 1.0f },
+	{ 0.5f, 0.5f, 0.5f, 1.0f },
+	{ 0.5f, 0.5f, 0.5f, 1.0f },
+	50.0f
 };
 						
 void set_material(GLenum face, MaterialType *material)
