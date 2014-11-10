@@ -127,7 +127,8 @@ GLint textureSampler;
 #define STAGE_WOOD_PLANK 58
 #define CLEAR 59
 #define WOOD_ROOF 60
-#define NO_TEXTURES 61
+#define ENVIRONMENT 61
+#define NO_TEXTURES 62
 // Texture indices
 GLuint tex_ids[NO_TEXTURES];
 // Texture files
@@ -140,7 +141,7 @@ char texture_files[NO_TEXTURES][20] = {"tb.jpg", "drp.jpg", "dlid.jpg", "tile.pn
 "chandppr.jpg", "tablecloth.jpg","shoji.png", "smetal.jpg", "wdflrsidesplank.jpg", "dplank.jpg", "dplankrot.jpg", 
 "wdplank.jpg", "wdplankrot.jpg","wallpanel.jpg", "stagewdlsides.jpg", "stagewdssides.jpg", "stagewdstair.jpg", 
 "stagewdstairrot.jpg", "wdsmall.jpg", "dwoodsmall.jpg", "orange.jpg", "stagewdp.jpg", "stagewdprot.jpg", 
-"stagewdplank.jpg", "white.png", "wdroof.jpg"};
+"stagewdplank.jpg", "white.png", "wdroof.jpg", "environment.png"};
 /////////////////////////////
 
 #define RAD2DEG (180.0f/3.14159f)
@@ -280,6 +281,7 @@ int main(int argc, char *argv[])
 	//get rid of cursor
 	glutSetCursor(GLUT_CURSOR_NONE);
 
+	//Set shading model
 	glShadeModel(GL_SMOOTH);
 
 	//ENABLE THE DEPTH TEST!!!
@@ -340,6 +342,9 @@ void display()
 	// Set number of lights
 	glUniform1i(number_of_lights, num_lights);
 
+	//Create mirror texture (Environment Mapping)
+	create_Mirror();
+
 	// Reset background
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -362,11 +367,60 @@ void display()
 	// Render scene
 	render_Scene();
 
+	//Render mirror (Environment Mapping)
+	render_Mirror();
+
 	// Flush buffer
 	glFlush();
 
 	// Swap buffers
 	glutSwapBuffers();
+}
+
+void create_Mirror()
+{
+	// PASS 1 - Render reflected scene
+	// Reset background
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//Set projection matrix for flat "mirror" camera
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustum(-1.0, 1.0, -0.5, 0.5, 0.5, 200.0);
+
+	//Set modelview matrix positioning "mirror" camera
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(15.0, 12.5, HOUSE_Z - 0.5, 15.0 - (eye[X] - 15.0), eye[Y], eye[Z], 0.0, 100.0, 0.0);
+
+	//Render scene from mirror
+	render_Scene();
+
+	glFinish();
+
+	//Copy scene to texture
+	glBindTexture(GL_TEXTURE_2D, tex_ids[ENVIRONMENT]);
+	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, 512, 512, 0);
+}
+
+// Mirror render function
+void render_Mirror()
+{
+	glPushMatrix();
+	//Draw mirror surface
+	glBindTexture(GL_TEXTURE_2D, tex_ids[ENVIRONMENT]);
+	set_material(GL_FRONT, &clear);
+	glBegin(GL_POLYGON);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(25.0f, 17.5f, HOUSE_Z - 0.5f);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(25.0f, 7.5f, HOUSE_Z - 0.5f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(5.0f, 7.5f, HOUSE_Z - 0.5f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(5.0f, 17.5f, HOUSE_Z - 0.5f);
+	glEnd();
+	glPopMatrix();
 }
 
 // Routine to load textures using SOIL
@@ -379,6 +433,11 @@ bool load_textures()
 		{
 			tex_ids[i] = SOIL_load_OGL_texture(texture_files[i], SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 		}
+		else if (i == ENVIRONMENT)
+		{
+			// Load environment map texture (NO MIPMAPPING)
+			tex_ids[i] = SOIL_load_OGL_texture(texture_files[i], SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+		}
 		else
 		{
 			tex_ids[i] = SOIL_load_OGL_texture(texture_files[i], SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
@@ -387,13 +446,26 @@ bool load_textures()
 		// Set texture properties if successfully loaded
 		if (tex_ids[i] != 0)
 		{
-			//Set scaling filters
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+			if (i == ENVIRONMENT)
+			{
+				// Set scaling filters (no mipmap)
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-			//Set wrapping modes
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				// Set wrapping modes (clamped)
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+			}
+			else
+			{
+				//Set scaling filters
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+
+				//Set wrapping modes
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			}
 		}
 		// Otherwise texture failed to load
 		else
@@ -1203,7 +1275,7 @@ void balcony_list()
 	hybridcube(DARK_WOOD_PILLAR_ROT, DARK_WOOD_PILLAR_ROT, DARK_WOOD_SMALL, DARK_WOOD_SMALL, DARK_WOOD_PILLAR_ROT, DARK_WOOD_PILLAR_ROT);
 	glPopMatrix();
 	//Z NEG RAILING VERTICAL
-	//glUseProgram(textureProg);
+	set_material(GL_FRONT, &clear);
 	glPushMatrix();
 	glTranslatef(-41.875f, SECOND_FLOOR + 2.85f, -35.0f);
 	for (int i = 0; i < 22; i++)
@@ -1239,7 +1311,6 @@ void balcony_list()
 	glPopMatrix();
 
 	//SECOND FLOOR -- Z POS
-	//glUseProgram(textureProg);
 	glPushMatrix();
 	glTranslatef(0.0f, SECOND_FLOOR, -42.5f);
 	glScalef(150.f, 0.25f, 15.0f);
@@ -1276,6 +1347,7 @@ void balcony_list()
 	hybridcube(DARK_WOOD_PILLAR_ROT, DARK_WOOD_PILLAR_ROT, DARK_WOOD_SMALL, DARK_WOOD_SMALL, DARK_WOOD_PILLAR_ROT, DARK_WOOD_PILLAR_ROT);
 	glPopMatrix();
 	//Z POS RAILING VERTICAL
+	set_material(GL_FRONT, &clear);
 	glPushMatrix();
 	glTranslatef(-41.875f, SECOND_FLOOR + 2.85f, 35.0f);
 	for (int i = 0; i < 22; i++)
@@ -1301,7 +1373,6 @@ void balcony_list()
 		hybridcube(NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, RAILING_ART, RAILING_ART);
 		glPopMatrix();
 		////////////
-		set_material(GL_FRONT, &faux_wood);
 		glTranslatef(0.5f, 0.0f, 0.0f);
 		glPushMatrix();
 		glScalef(0.1f, 0.75f, 0.2f);
@@ -1315,7 +1386,7 @@ void balcony_list()
 	glPushMatrix();
 	glTranslatef(-57.5f, SECOND_FLOOR, 0.0f);
 	glScalef(35.0f, 0.25f, 70.0f);
-	hybridcube(DARK_WOOD, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
+	hybridcube(DARK_WOOD, DARK_WOOD, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES);
 	glPopMatrix();
 	//BALCONY SIDING (with room for stairs)
 	glPushMatrix();
@@ -2266,7 +2337,6 @@ void entrance_list()
 	hybridcube(WOOD_MID_SIDES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, WOOD_FLOOR_SIDING_PLANK, WOOD_FLOOR_SIDING_PLANK);
 	glPopMatrix();
 	//railing
-	//glUseProgram(textureProg);
 	set_material(GL_FRONT, &faux_wood);
 	glTranslatef(0, 4.0f, -5.0f);
 	glPushMatrix();
@@ -2291,7 +2361,6 @@ void entrance_list()
 	glScalef(19.5f, 1.0f, 0.25f);
 	hybridcube(NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, WOOD_PLANK_ROT, WOOD_PLANK_ROT);
 	glPopMatrix();
-	//glUseProgram(textureProg);
 	// back bannister 1
 	glTranslatef(10.0f, 1.0f, 0.0f);
 	glPushMatrix();
@@ -2369,7 +2438,7 @@ void entrance_list()
 	texcube();
 	glPopMatrix();
 	//ARCHWAY ROOF
-	//glUseProgram(textureProg);
+	set_material(GL_FRONT, &clear);
 	glTranslatef(-13.0f, 0.0f, 5.0f);
 	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, tex_ids[TILE]);
@@ -2564,17 +2633,20 @@ void table_list()
 	hybridcube(TABLE_WOOD, TABLE_WOOD, TABLE_WOOD_LEG, TABLE_WOOD_LEG, TABLE_WOOD_LEG, TABLE_WOOD_LEG);
 	glPopMatrix();
 	//tablecloth
-	//glUseProgram(textureProg);
 	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, tex_ids[TABLECLOTH]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 0);
+	glNormal3fv(vnorm[4]);
 	glVertex3f(1.126f, 2.76f, 0.5f);
 	glTexCoord2f(0, 1);
+	glNormal3fv(vnorm[7]);
 	glVertex3f(1.126f, 2.76f, -0.5f); 
 	glTexCoord2f(2, 1);
+	glNormal3fv(vnorm[6]);
 	glVertex3f(-1.126f, 2.76f, -0.5f);
 	glTexCoord2f(2, 0);
+	glNormal3fv(vnorm[5]);
 	glVertex3f(-1.126f, 2.76f, 0.5f);
 	glEnd();
 	glPopMatrix();
@@ -2642,7 +2714,7 @@ void table_list()
 	glPopMatrix();
 
 	//SODA CAN
-	//glUseProgram(textureProg);	//go to the texture program
+	set_material(GL_FRONT, &clear);
 	glPushMatrix();
 	glTranslatef(0.4f, 3.3f, 0.5f);
 	//////

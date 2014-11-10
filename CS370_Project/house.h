@@ -48,6 +48,9 @@ void tex_quad(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat n1
 void hybridcube(int top, int bottom, int left, int right, int front, int back);
 void draw_chandelier();
 void draw_fan();
+//Environment Mapping
+void create_Mirror();
+void render_Mirror();
 
 //display list prototypes
 void table_list();
