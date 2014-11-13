@@ -1,8 +1,7 @@
 This is a simple OpenGL first person simulation of the House of Blue Leaves from Quentin Tarantino's Kill Bill Vol. 1 (2003).
 
-////////////////////////////////////////////////
-//////////// Required Libraries  ///////////////
-////////////////////////////////////////////////
+_Required Libraries_
+
 FreeGLUT: the OpenGL window management package.
 SOIL: the Simple OpenGL Image Library.
 GLEW: the OpenGL Extension Wrangler Library.
