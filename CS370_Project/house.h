@@ -14,8 +14,11 @@
 #define WALL_Y_UPPER				40.0f
 #define WALL_Y_LOWER				0.0f
 
-#define WALKSPD				300.0f
 #define SENS				10.0f
+#define FRICTION			0.85f
+#define MAXSPD				500.0f
+#define WALKSPD				100.0f
+#define MOVEMENT_COEFF		30000.0f
 #define FLY					//comment this out to remove flying and add boundary clipping
 #define FAN
 //#define DRAW_LIGHTBULBS
@@ -50,6 +53,7 @@ void tex_quad(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat n1
 void hybridcube(int top, int bottom, int left, int right, int front, int back);
 void draw_chandelier();
 void draw_fan();
+void movement();
 //Environment Mapping
 void create_Mirror();
 void render_Mirror();

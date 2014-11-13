@@ -205,9 +205,10 @@ GLfloat start_y = 0;
 GLfloat dx = 0;
 GLfloat dy = 0;
 char fps_str[32];
-GLfloat velocity[3] = { 0.0f, 0.0f, 0.0f };
-GLfloat acceleration[3] = { 0.0f, 0.0f, 0.0f };
-GLfloat accel_dir[3] = {1.0f, 1.0f, 1.0f};
+GLfloat fwd_move_ctr = 0;
+GLfloat back_move_ctr = 0;
+GLfloat left_move_ctr = 0;
+GLfloat right_move_ctr = 0;
 
 //lighting global variables
 GLfloat light0_pos[4] = { 50.0f, 30.0f, 45.0f, 1.0f };		//ENTRANCE Z-POS CORNER
@@ -520,16 +521,18 @@ void keyfunc(unsigned char key, int x, int y)
 	//left strafe
 	if (key == 'a')
 	{
-		eye[X] += at[Z] / WALKSPD;
-		eye[Z] -= at[X] / WALKSPD;
-		//acceleration[X] += at[Z] / 30000.0f;
-		//acceleration[Z] -= at[X] / 30000.0f;
+		if (left_move_ctr < MAXSPD)
+		{
+			left_move_ctr += WALKSPD;
+		}
 	}
 	//right strafe
 	else if (key == 'd')
 	{
-		eye[X] -= at[Z] / WALKSPD;
-		eye[Z] += at[X] / WALKSPD;
+		if (right_move_ctr < MAXSPD)
+		{
+			right_move_ctr += WALKSPD;
+		}
 	}
 
 
@@ -537,21 +540,19 @@ void keyfunc(unsigned char key, int x, int y)
 	{
 		//the camera should move away from the 
 		//direction that the camera is pointing
-		eye[X] -= at[X] / WALKSPD;
-#ifdef FLY
-		eye[Y] -= at[Y] / WALKSPD;
-#endif
-		eye[Z] -= at[Z] / WALKSPD;
+		if (back_move_ctr > -MAXSPD)
+		{
+			back_move_ctr -= WALKSPD;
+		}
 	}
 	else if (key == 'w')
 	{
 		//the camera should move in the direction
 		//that the camera is pointing
-		eye[X] += at[X] / WALKSPD;
-#ifdef FLY
-		eye[Y] += at[Y] / WALKSPD;
-#endif
-		eye[Z] += at[Z] / WALKSPD;
+		if (fwd_move_ctr < MAXSPD)
+		{
+			fwd_move_ctr += WALKSPD;
+		}
 	}
 
 	if(key == ' ')
@@ -674,35 +675,49 @@ void idlefunc()
 		sprintf(fps_str, "%3.2f", fps);
 	}
 
-	//perform movement ops for x,y,&z
-	for (int i = 0; i < 3; i++)
-	{
-		//update velocity
-		//velocity[i] = acceleration[i];
-
-		//decrement acceleration
-		if (acceleration[i] > 0)
-		{
-			acceleration[i] -= 0.1f;
-		}
-		else if (acceleration[i] < 0)
-		{
-			acceleration[i] += 0.1f;
-		}
-		else if (acceleration[i] < 0.1f && acceleration[i] > -0.1f)
-		{
-			acceleration[i] = 0.0f;
-		}
-
-		//update camera position
-		//eye[i] += velocity[i];
-		eye[i] += acceleration[i];
-	}
-
-
+	//update camera position
+	movement();
 
 	// Render scene
 	glutPostRedisplay();
+}
+
+//Camera movement calcultion
+void movement()
+{
+	if (fwd_move_ctr > 0.01f)
+	{
+		eye[X] += (at[X] / MOVEMENT_COEFF) * fwd_move_ctr;
+#ifdef FLY
+		eye[Z] += (at[Z] / MOVEMENT_COEFF) * fwd_move_ctr;
+#endif
+		eye[Y] += (at[Y] / MOVEMENT_COEFF) * fwd_move_ctr;
+		fwd_move_ctr *= FRICTION;
+	}
+
+	if (back_move_ctr < 0.01f)
+	{
+		eye[X] += (at[X] / MOVEMENT_COEFF) * back_move_ctr;
+#ifdef FLY
+		eye[Z] += (at[Z] / MOVEMENT_COEFF) * back_move_ctr;
+#endif
+		eye[Y] += (at[Y] / MOVEMENT_COEFF) * back_move_ctr;
+		back_move_ctr *= FRICTION;
+	}
+
+	if (left_move_ctr > 0)
+	{
+		eye[X] += (at[Z] / MOVEMENT_COEFF) * left_move_ctr;
+		eye[Z] -= (at[X] / MOVEMENT_COEFF) * left_move_ctr;
+		left_move_ctr *= FRICTION;
+	}
+
+	if (right_move_ctr > 0)
+	{
+		eye[X] -= (at[Z] / MOVEMENT_COEFF) * right_move_ctr;
+		eye[Z] += (at[X] / MOVEMENT_COEFF) * right_move_ctr;
+		right_move_ctr *= FRICTION;
+	}
 }
 
 // Reshape callback
@@ -1359,7 +1374,7 @@ void balcony_list()
 		hybridcube(NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, RAILING_ART, RAILING_ART);
 		glPopMatrix();
 		///////////
-		set_material(GL_FRONT, &dark_wood);
+		//set_material(GL_FRONT, &dark_wood);
 		glTranslatef(0.5f, 0.0f, 0.0f);
 		glPushMatrix();
 		glScalef(0.1f, 0.75f, 0.2f);
@@ -1433,7 +1448,7 @@ void balcony_list()
 		hybridcube(NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, NO_TEXTURES, RAILING_ART, RAILING_ART);
 		glPopMatrix();
 		////////////
-		set_material(GL_FRONT, &dark_wood);
+		//set_material(GL_FRONT, &dark_wood);
 		glTranslatef(0.5f, 0.0f, 0.0f);
 		glPushMatrix();
 		glScalef(0.1f, 0.75f, 0.2f);
@@ -1503,7 +1518,7 @@ void balcony_list()
 			hybridcube(NO_TEXTURES, NO_TEXTURES, RAILING_ART, RAILING_ART, NO_TEXTURES, NO_TEXTURES);
 			glPopMatrix();
 			////////////
-			set_material(GL_FRONT, &dark_wood);
+			//set_material(GL_FRONT, &dark_wood);
 			glTranslatef(0.0f, 0.0f, 0.5f);
 			glPushMatrix();
 			glScalef(0.2f, 0.75f, 0.1f);
