@@ -157,7 +157,7 @@ void main()
 	vec3 normal = vec3(0.0);
 	vec4 ecPosition;
 	vec3 ecPosition3;
-	vec3 eye = vec3(0.0,0.0,1.0);
+	//vec3 eye = vec3(1.0,1.0,1.0);
 	vec4 color = vec4(0.0,0.0,0.0,0.0);
 
 	//Allow for blending
@@ -172,6 +172,8 @@ void main()
 	//Transform vertex to eye coordinates
 	ecPosition = gl_ModelViewMatrix * gl_Vertex;
 	ecPosition3 = (vec3(ecPosition)) / ecPosition.w;
+
+	vec3 eye = -normalize(ecPosition3);
 
 	//Compute transformed (normalized) normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);

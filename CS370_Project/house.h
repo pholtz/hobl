@@ -15,8 +15,10 @@
 #define WALL_Y_LOWER				0.0f
 
 #define WALKSPD				300.0f
+#define SENS				10.0f
 #define FLY					//comment this out to remove flying and add boundary clipping
 #define FAN
+//#define DRAW_LIGHTBULBS
 
 GLfloat roof[][3] = { { HOUSE_X, HOUSE_Y, HOUSE_Z }, { HOUSE_X, HOUSE_Y, -HOUSE_Z }, { -HOUSE_X, HOUSE_Y, -HOUSE_Z },
 { -HOUSE_X, HOUSE_Y, HOUSE_Z } };

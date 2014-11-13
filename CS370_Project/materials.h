@@ -13,9 +13,9 @@ MaterialType brass = {  { 0.33f, 0.22f, 0.03f, 1.0f },
 
 // Material properties for glass
 MaterialType glass = { 
-	{ 0.0f, 0.0f, 0.0f, 0.15f }, 
-	{ 0.65f, 0.65f, 0.65f, 0.15f }, 
-	{ 0.75f, 0.75f, 0.75f, 0.15f },
+	{ 0.25f, 0.25f, 0.25f, 0.075f }, 
+	{ 0.65f, 0.65f, 0.65f, 0.075f }, 
+	{ 0.75f, 0.75f, 0.75f, 0.075f },
 	100.0f
 };
 
@@ -44,9 +44,9 @@ MaterialType white_rubber = {
 
 //Taken from: http://www.it.hiof.no/~borres/j3d/explain/light/p-materials.html
 MaterialType chrome = {
+	{ 0.1f, 0.1f, 0.1f, 1.0f },
 	{ 0.25f, 0.25f, 0.25f, 1.0f },
-	{ 0.4f, 0.4f, 0.4f, 1.0f },
-	{ 0.774597f, 0.774597f, 0.774597f, 1.0f },
+	{ 0.574597f, 0.574597f, 0.574597f, 1.0f },
 	76.8f
 };
 
@@ -63,7 +63,7 @@ MaterialType faux_wood = {
 	{ 0.24f, 0.14f, 0.07f, 1.0f },
 	{ 0.28f, 0.16f, 0.1f, 1.0f },
 	{ 0.47f, 0.29f, 0.0f, 1.0f },
-	10.0f
+	50.0f
 };
 
 //Created using Mated
@@ -76,17 +76,17 @@ MaterialType light_wood = {
 
 //Created using Mated
 MaterialType dark_wood = {
-	{ 0.14f, 0.04f, 0.07f, 1.0f },
-	{ 0.18f, 0.06f, 0.1f, 1.0f },
-	{ 0.37f, 0.19f, 0.0f, 1.0f },
-	10.0f
+	{ 0.1f, 0.07f, 0.035f, 1.0f },
+	{ 0.125f, 0.08f, 0.05f, 1.0f },
+	{ 0.25f, 0.15f, 0.0f, 1.0f },
+	0.0f
 };
 
 MaterialType black_plastic = {
 	{ 0.0f, 0.0f, 0.0f, 1.0f },
 	{ 0.01f, 0.01f, 0.01, 1.0f },
-	{ 0.50f, 0.50f, 0.50, 1.0f },
-	32.0f
+	{ 0.0f, 0.0f, 0.0, 1.0f },
+	0.5f
 };
 
 MaterialType red_rubber = {
@@ -108,6 +108,20 @@ MaterialType white = {
 	{ 0.5f, 0.5f, 0.5f, 1.0f },
 	{ 0.5f, 0.5f, 0.5f, 1.0f },
 	50.0f
+};
+
+MaterialType light_yellow = {
+	{ 0.5f, 0.5f, 0.35f, 1.0f },
+	{ 0.5f, 0.5f, 0.35f, 1.0f },
+	{ 0.5f, 0.5f, 0.35f, 1.0f },
+	20.0f
+};
+
+MaterialType obsidian = {
+	{ 0.05375f, 0.05f, 0.06625f, 1.0f },
+	{ 0.18275f, 0.17f, 0.22525f, 1.0f },
+	{ 0.332741f, 0.328634f, 0.346435f, 1.0f },
+	10.0f
 };
 						
 void set_material(GLenum face, MaterialType *material)
