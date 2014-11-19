@@ -15,10 +15,10 @@
 #define WALL_Y_LOWER				0.0f
 
 #define SENS				10.0f
-#define FRICTION			0.85f
-#define MAXSPD				500.0f
-#define WALKSPD				100.0f
-#define MOVEMENT_COEFF		30000.0f
+#define FRICTION			0.9f
+#define MAXSPD				100.0f
+#define WALKSPD				10.0f
+#define MOVEMENT_COEFF		100000.0f
 #define FLY					//comment this out to remove flying and add boundary clipping
 #define FAN
 //#define DRAW_LIGHTBULBS
