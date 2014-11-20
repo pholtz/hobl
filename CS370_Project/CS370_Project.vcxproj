@@ -82,9 +82,12 @@
     <ClInclude Include="lighting.h" />
     <ClInclude Include="materials.h" />
     <ClInclude Include="shaderutils.h" />
+    <ClInclude Include="sphere.h" />
     <ClInclude Include="vectorops.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="bumpfrag.fs" />
+    <None Include="bumpvert.vs" />
     <None Include="modfrag.fs" />
     <None Include="modvert.vs" />
   </ItemGroup>

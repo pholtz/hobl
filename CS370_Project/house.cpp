@@ -52,6 +52,7 @@ git push -u origin master
 #include "lighting.h"
 #include "materials.h"
 #include "vectorops.h"
+#include "sphere.h"
 
 //include Paul's house header file
 #include "house.h"
@@ -59,15 +60,15 @@ git push -u origin master
 // Shader file utility functions
 #include "shaderutils.h"
 
+//TEXTURE STUFF
+/////////////////////////////
 //Modulated Shader
 GLchar* mvertexFile = "modvert.vs";
 GLchar* mfragmentFile = "modfrag.fs";
 GLuint modProg;
 GLint textureSampler;
 GLuint number_of_lights;
-
-//TEXTURE STUFF
-/////////////////////////////
+////////////////
 // Texture constants
 #define TENNIS_BALL 0
 #define DR_PEPPER 1
@@ -131,7 +132,9 @@ GLuint number_of_lights;
 #define CLEAR 59
 #define WOOD_ROOF 60
 #define ENVIRONMENT 61
-#define NO_TEXTURES 62
+#define BALL 62
+#define BALL_NORMAL 63
+#define NO_TEXTURES 64
 // Texture indices
 GLuint tex_ids[NO_TEXTURES];
 // Texture files
@@ -144,8 +147,18 @@ char texture_files[NO_TEXTURES][20] = {"tb.jpg", "drp.jpg", "dlid.jpg", "tile.pn
 "chandppr.jpg", "tablecloth.jpg","shoji.png", "smetal.jpg", "wdflrsidesplank.jpg", "dplank.jpg", "dplankrot.jpg", 
 "wdplank.jpg", "wdplankrot.jpg","wallpanel.jpg", "stagewdlsides.jpg", "stagewdssides.jpg", "stagewdstair.jpg", 
 "stagewdstairrot.jpg", "wdsmall.jpg", "dwoodsmall.jpg", "orange.jpg", "stagewdp.jpg", "stagewdprot.jpg", 
-"stagewdplank.jpg", "white.png", "wdroof.jpg", "environment.png"};
+"stagewdplank.jpg", "white.png", "wdroof.jpg", "environment.png", "basketball.bmp", "dimple_normal.bmp"};
 /////////////////////////////
+
+//bump shader
+GLchar* bumpVertexFile = "bumpvert.vs";
+GLchar* bumpFragmentFile = "bumpfrag.fs";
+GLuint bumpProg;
+GLint bumpSampler[2];
+#define BALL_UNIT 0
+#define NORMAL_UNIT 1
+//////////////
+GLuint tangParam;
 
 #define RAD2DEG (180.0f/3.14159f)
 #define DEG2RAD (3.14159f/180.0f)
@@ -173,10 +186,6 @@ char texture_files[NO_TEXTURES][20] = {"tb.jpg", "drp.jpg", "dlid.jpg", "tile.pn
 #define BAR 12
 #define FIRST_FLOOR_REAR 13
 #define BAR_CHAIR 14
-
-// View modes
-#define ORTHOGRAPHIC 0
-#define PERSPECTIVE 1
 
 // Cube vertices
 GLfloat cube[][3] = { { -0.5f, -0.5f, -0.5f }, { 0.5f, -0.5f, -0.5f }, { 0.5f, -0.5f, 0.5f },
@@ -264,8 +273,6 @@ int main(int argc, char *argv[])
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
 	// Set the window size to image size
-	//glutInitWindowSize(512,512);
-	//glutInitWindowSize(1280, 1020);
 	glutInitWindowSize(1920, 1080);
 
 	// Create window
@@ -327,6 +334,13 @@ int main(int argc, char *argv[])
 	{
 		exit(0);
 	}
+
+	//Set up Bump Shader
+	bumpProg = load_shaders(bumpVertexFile, bumpFragmentFile);
+	bumpSampler[BALL_UNIT] = glGetUniformLocation(bumpProg, "colorMap");
+	bumpSampler[NORMAL_UNIT] = glGetUniformLocation(bumpProg, "normalMap");
+	//////////////////
+	tangParam = glGetAttribLocation(bumpProg, "tangento");
 
 	//Set up Modular Shader
 	modProg = load_shaders(mvertexFile, mfragmentFile);
@@ -934,6 +948,25 @@ void render_Scene()
 	glPushMatrix();
 	set_material(GL_FRONT, &clear);
 	glCallList(FIRST_FLOOR_REAR);
+	glPopMatrix();
+
+	/////////////////////////
+	// Activate bump map shader
+	glUseProgram(bumpProg);
+
+	// Associate BALL with texture unit 0
+	glUniform1i(bumpSampler[BALL_UNIT], BALL);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tex_ids[BALL]);
+
+	// Associate NORMAL with texture unit 1
+	glUniform1i(bumpSampler[BALL_NORMAL], BALL_NORMAL);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, tex_ids[BALL_NORMAL]);
+
+	glPushMatrix();
+		
+		mySphere2(true, tangParam);
 	glPopMatrix();
 
 }

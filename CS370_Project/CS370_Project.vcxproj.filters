@@ -30,12 +30,21 @@
     <ClInclude Include="vectorops.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="sphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="modfrag.fs">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="modvert.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="bumpvert.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="bumpfrag.fs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
